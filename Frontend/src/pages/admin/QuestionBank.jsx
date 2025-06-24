@@ -1,11 +1,7 @@
 import React from 'react'
 
 const QuestionBank = () => {
-  return (
-    <div>
-      
-    </div>
-  )
+  return <div>QuestionBank </div>;
 }
 
 export default QuestionBank

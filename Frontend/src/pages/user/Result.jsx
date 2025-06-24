@@ -1,6 +1,6 @@
 import React from 'react'
 
-const RoleSelection = () => {
+const Result = () => {
   return (
     <div>
       
@@ -8,4 +8,4 @@ const RoleSelection = () => {
   )
 }
 
-export default RoleSelection
+export default Result

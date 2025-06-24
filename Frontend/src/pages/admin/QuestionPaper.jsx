@@ -1,11 +1,7 @@
 import React from 'react'
 
 const QuestionPaper = () => {
-  return (
-    <div>
-      
-    </div>
-  )
+  return <div>QuestionPaper</div>;
 }
 
 export default QuestionPaper

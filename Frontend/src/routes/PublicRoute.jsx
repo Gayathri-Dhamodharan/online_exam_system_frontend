@@ -2,18 +2,6 @@
 import { Navigate, Outlet } from "react-router-dom";
 import React from "react";
 
-// const PublicRoute = () => {
-//   const { token, role } = useSelector((state) => state.auth);
-
-//   // If logged in, redirect to dashboard based on role
-//   if (token && role) {
-//     return <Navigate to={`/${role}/dashboard`} />;
-//   }
-
-//   return <Outlet />;
-// };
-
-// export default PublicRoute;
 const PublicRoute = () => {
   // MOCK token/role until Redux is connected
   const token = localStorage.getItem("token");

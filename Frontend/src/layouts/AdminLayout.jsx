@@ -154,7 +154,7 @@ const AdminLayout = () => {
       path: "/admin/questions",
     },
     {
-      text: "Question Paper",
+      text: "Exams",
       icon: <DescriptionIcon />,
       path: "/admin/papers",
     },
@@ -229,11 +229,12 @@ const AdminLayout = () => {
             "& .MuiDrawer-paper": {
               width: drawerWidth,
               background:
-                "linear-gradient(to bottom, #b2dde1, #48a7a9, #006a70)",
+                "linear-gradient(to bottom, #006a70,rgb(44, 150, 152))",
               color: "#fff",
             },
           }}
         >
+          
           {drawer}
         </Drawer>
 

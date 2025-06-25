@@ -196,8 +196,6 @@ const AdminDashboard = () => {
     </div>
   );
 
-
-
   const getStatusBadge = (status) => {
     const badges = {
       scheduled: "bg-green-100 text-green-800 border-green-200",
@@ -388,7 +386,7 @@ const AdminDashboard = () => {
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
         {/* Recent Results */}
-        {/* <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900 flex items-center">
               <Award className="h-5 w-5 text-teal-600 mr-2" />
@@ -436,10 +434,10 @@ const AdminDashboard = () => {
               </div>
             ))}
           </div>
-        </div> */}
+        </div>
 
         {/* Subject Statistics */}
-        {/* <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900 flex items-center">
               <BarChart3 className="h-5 w-5 text-teal-600 mr-2" />
@@ -481,11 +479,11 @@ const AdminDashboard = () => {
               </div>
             ))}
           </div>
-        </div> */}
+        </div>
       </div>
 
       {/* Quick Actions */}
-      {/* <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
           <Target className="h-5 w-5 text-teal-600 mr-2" />
           Quick Actions
@@ -508,10 +506,10 @@ const AdminDashboard = () => {
             <span>View Reports</span>
           </button>
         </div>
-      </div> */}
+      </div>
 
       {/* Performance Overview */}
-      {/* <div className="mt-6 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <div className="mt-6 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">
           Performance Overview
         </h3>
@@ -538,7 +536,7 @@ const AdminDashboard = () => {
             <div className="text-xs text-purple-600">Based on feedback</div>
           </div>
         </div>
-      </div> */}
+      </div>
     </div>
   );
 };

@@ -7,12 +7,10 @@ import QuestionBank from "../pages/admin/QuestionBank";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import UserDashboard from "../pages/user/UserDashboard";
 import Exam from "../pages/user/Exam";
-import PrivateRoute from "./PrivateRoute";
 import AdminLayout from "../layouts/AdminLayout";
 import UserLayout from "../layouts/UserLayout";
 import Review from "../pages/admin/Review";
 import Result from "../pages/user/Result";
-import Exams from "../pages/admin/Exams";
 
 const AppRoutes = () => (
   <Routes>
@@ -25,23 +23,22 @@ const AppRoutes = () => (
     </Route>
 
     {/* Admin Private Routes */}
-    <Route element={<PrivateRoute allowedRole="admin" />}>
+    {/* <Route element={<PrivateRoute/>}> */}
       <Route element={<AdminLayout />}>
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/questions" element={<QuestionBank />} />
-        <Route path="/admin/papers" element={<Exams />} />
         <Route path="/admin/results" element={<Review />} />
       </Route>
-    </Route>
+    {/* </Route> */}
 
     {/* User Private Routes */}
-    <Route element={<PrivateRoute allowedRole="user" />}>
+    {/* <Route element={<PrivateRoute allowedRole="user" />}> */}
       <Route element={<UserLayout />}>
         <Route path="/user/dashboard" element={<UserDashboard />} />
         <Route path="/user/exams" element={<Exam />} />
         <Route path="/user/results" element={<Result />} />
       </Route>
-    </Route>
+    {/* </Route> */}
 
     {/* Fallback */}
     <Route path="*" element={<Navigate to="/" />} />

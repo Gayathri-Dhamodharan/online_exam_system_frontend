@@ -1,11 +1,7 @@
 import React from 'react'
 
 const Exam = () => {
-  return (
-    <div>
-      
-    </div>
-  )
+  return <div>Exam</div>;
 }
 
 export default Exam

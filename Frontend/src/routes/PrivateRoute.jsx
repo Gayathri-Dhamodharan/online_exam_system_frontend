@@ -15,14 +15,12 @@
 
 import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import AppRoutes from "./AppRoutes";
-
 
 const PrivateRoute = ({ allowedRole }) => {
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("selectedRole");
 
-  if (!token || role !== allowedRole) {
+  if (!token || role == allowedRole) {
     return <Navigate to="/login" />;
   }
 

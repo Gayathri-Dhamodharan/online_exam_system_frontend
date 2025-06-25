@@ -1,7 +1,7 @@
 import React from 'react'
 
-const QuestionPaper = () => {
+const Exams = () => {
   return <div>QuestionPaper</div>;
 }
 
-export default QuestionPaper
+export default Exams

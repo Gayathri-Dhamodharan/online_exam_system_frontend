@@ -1,244 +1,292 @@
-
 import React, { useState } from "react";
 import { useFormik } from "formik";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import * as Yup from "yup";
+import axios from "axios";
 import {
   Mail,
   Lock,
   Eye,
   EyeOff,
-  User,
-  UserCheck,
-  ArrowRight,
   Users,
+  ArrowRight,
 } from "lucide-react";
 
-const Register = ({  onRegister }) => {
+const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-const navigate = useNavigate();
+  const [showConfirm, setShowConfirm] = useState(false);
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+
+  // Determine mode
+  const mode = pathname === "/admin/register" ? "admin" : "student";
+
+  // Shared input classes + mode-specific border color
+  const inputClass = `
+    w-full px-3 py-2 text-sm border rounded-lg
+    focus:ring-1 focus:ring-teal-500
+    ${mode === "student" ? "border-blue-500" : "border-red-500"}
+  `;
+
+  // Build validation schema based on mode
+  const validationSchema = Yup.object({
+    firstName: Yup.string().required("Required"),
+    lastName:  Yup.string().required("Required"),
+    email:     Yup.string().email("Invalid").required("Required"),
+    password:  Yup.string().min(6, "Min 6 chars").required("Required"),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref("password"), null], "Must match")
+      .required("Required"),
+
+    // Student-only
+    className: mode === "student"
+      ? Yup.string().required("Class is required")
+      : Yup.string().notRequired(),
+    section: mode === "student"
+      ? Yup.string().required("Section is required")
+      : Yup.string().notRequired(),
+
+    // Admin-only
+    graduateIn: mode === "admin"
+      ? Yup.string().required("Graduate In is required")
+      : Yup.string().notRequired(),
+    joiningDate: mode === "admin"
+      ? Yup.date().required("Joining Date is required")
+      : Yup.date().notRequired(),
+  });
 
   const formik = useFormik({
     initialValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      password: "",
+      firstName:     "",
+      lastName:      "",
+      email:         "",
+      password:      "",
       confirmPassword: "",
-      role: "student",
+      role:          mode,            // hidden
+      className:     "",              // student
+      section:       "",              // student
+      graduateIn:    "",              // admin
+      joiningDate:   "",              // admin (YYYY-MM-DD)
     },
-    validationSchema: Yup.object({
-      firstName: Yup.string().required("First name is required"),
-      lastName: Yup.string().required("Last name is required"),
-      email: Yup.string().email("Invalid email").required("Email is required"),
-      password: Yup.string()
-        .min(6, "Minimum 6 characters")
-        .required("Password is required"),
-      confirmPassword: Yup.string()
-        .oneOf([Yup.ref("password"), null], "Passwords must match")
-        .required("Confirm your password"),
-    }),
-    onSubmit: (values) => {
-      onRegister(values); // optional if you want to use it
-      navigate("/login"); // navigate to login page
+    validationSchema,
+    onSubmit: async (values, { setSubmitting, setErrors }) => {
+      try {
+        await axios.post("/api/auth/register", values);
+        navigate("/login");
+      } catch (err) {
+        const msg = err.response?.data?.message || "Registration failed";
+        setErrors({ email: msg });
+      } finally {
+        setSubmitting(false);
+      }
     },
   });
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-[#f5f1e8] via-[#82e8d6] to-[#001922] px-3 sm:px-4">
-      <div className="w-full max-w-sm sm:max-w-md md:max-w-md mx-auto">
-        <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-xl p-4 sm:p-5">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#f5f1e8] via-[#82e8d6] to-[#001922] px-4">
+      <div className="w-full max-w-md">
+        <div className="bg-white/90 rounded-xl shadow-lg p-6">
           <div className="text-center mb-4">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-emerald-400 to-teal-600 rounded-full flex items-center justify-center mx-auto mb-2">
-              <Users className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
-            </div>
-            <h2 className="text-3xl sm:text-2xl font-semibold text-gray-800 mb-1">
-              Join Us
+            <Users className="mx-auto mb-2 w-12 h-12 text-teal-600" />
+            <h2 className="text-2xl font-bold text-gray-800">
+              {mode === "admin" ? "Admin Sign Up" : "Student Sign Up"}
             </h2>
-            <p className="text-gray-600 text-xs sm:text-sm">
-              Create your account to get started
-            </p>
           </div>
 
-          <form onSubmit={formik.handleSubmit} className="space-y-3">
-            {/* Role */}
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
-                Select Role
-              </label>
-              <div className="relative">
-                <select
-                  name="role"
-                  value={formik.values.role}
-                  onChange={formik.handleChange}
-                  className="w-full pl-10 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-teal-500 bg-white"
-                >
-                  <option value="student">Student</option>
-                  <option value="admin">Admin</option>
-                </select>
-                {formik.values.role === "admin" ? (
-                  <UserCheck className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                ) : (
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                )}
-              </div>
-            </div>
+          <form onSubmit={formik.handleSubmit} className="space-y-4">
+            {/* Hidden role */}
+            <input type="hidden" name="role" value={mode} />
 
-            {/* Name Fields */}
+            {/* First & Last Name */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">
-                  First Name
-                </label>
-                <input
-                  type="text"
-                  name="firstName"
-                  onChange={formik.handleChange}
-                  value={formik.values.firstName}
-                  className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-teal-500"
-                  placeholder="First name"
-                />
-                {formik.touched.firstName && formik.errors.firstName && (
-                  <p className="text-xs text-red-500 mt-1">
-                    {formik.errors.firstName}
-                  </p>
-                )}
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">
-                  Last Name
-                </label>
-                <input
-                  type="text"
-                  name="lastName"
-                  onChange={formik.handleChange}
-                  value={formik.values.lastName}
-                  className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-teal-500"
-                  placeholder="Last name"
-                />
-                {formik.touched.lastName && formik.errors.lastName && (
-                  <p className="text-xs text-red-500 mt-1">
-                    {formik.errors.lastName}
-                  </p>
-                )}
-              </div>
+              {["firstName", "lastName"].map((field) => (
+                <div key={field}>
+                  <label className="block text-xs text-gray-700 mb-1">
+                    {field === "firstName" ? "First Name" : "Last Name"}
+                  </label>
+                  <input
+                    name={field}
+                    value={formik.values[field]}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    className={inputClass}
+                    placeholder={field === "firstName" ? "First name" : "Last name"}
+                  />
+                  {formik.touched[field] && formik.errors[field] && (
+                    <p className="text-xs text-red-500">{formik.errors[field]}</p>
+                  )}
+                </div>
+              ))}
             </div>
 
             {/* Email */}
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
-                Email Address
-              </label>
+              <label className="block text-xs text-gray-700 mb-1">Email</label>
               <div className="relative">
                 <input
                   type="email"
                   name="email"
-                  onChange={formik.handleChange}
                   value={formik.values.email}
-                  className="w-full pl-10 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-teal-500"
-                  placeholder="Enter your email"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  className={`${inputClass} pl-10`}
+                  placeholder="you@example.com"
                 />
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               </div>
               {formik.touched.email && formik.errors.email && (
-                <p className="text-xs text-red-500 mt-1">
-                  {formik.errors.email}
-                </p>
+                <p className="text-xs text-red-500">{formik.errors.email}</p>
               )}
             </div>
 
             {/* Password */}
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
-                Password
-              </label>
+              <label className="block text-xs text-gray-700 mb-1">Password</label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
-                  onChange={formik.handleChange}
                   value={formik.values.password}
-                  className="w-full pl-10 pr-10 py-2 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-teal-500"
-                  placeholder="Create a password"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  className={`${inputClass} pl-10 pr-10`}
+                  placeholder="••••••••"
                 />
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"/>
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
+                  onClick={() => setShowPassword((v) => !v)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
                 >
-                  {showPassword ? (
-                    <EyeOff className="w-4 h-4" />
-                  ) : (
-                    <Eye className="w-4 h-4" />
-                  )}
+                  {showPassword ? <EyeOff className="w-4 h-4"/> : <Eye className="w-4 h-4"/>}
                 </button>
               </div>
               {formik.touched.password && formik.errors.password && (
-                <p className="text-xs text-red-500 mt-1">
-                  {formik.errors.password}
-                </p>
+                <p className="text-xs text-red-500">{formik.errors.password}</p>
               )}
             </div>
 
             {/* Confirm Password */}
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
+              <label className="block text-xs text-gray-700 mb-1">
                 Confirm Password
               </label>
               <div className="relative">
                 <input
-                  type={showConfirmPassword ? "text" : "password"}
+                  type={showConfirm ? "text" : "password"}
                   name="confirmPassword"
-                  onChange={formik.handleChange}
                   value={formik.values.confirmPassword}
-                  className="w-full pl-10 pr-10 py-2 text-sm border border-gray-200 rounded-lg focus:ring-1 focus:ring-teal-500"
-                  placeholder="Confirm password"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  className={`${inputClass} pl-10 pr-10`}
+                  placeholder="••••••••"
                 />
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"/>
                 <button
                   type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  onClick={() => setShowConfirm((v) => !v)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
                 >
-                  {showConfirmPassword ? (
-                    <EyeOff className="w-4 h-4" />
-                  ) : (
-                    <Eye className="w-4 h-4" />
-                  )}
+                  {showConfirm ? <EyeOff className="w-4 h-4"/> : <Eye className="w-4 h-4"/>}
                 </button>
               </div>
-              {formik.touched.confirmPassword &&
-                formik.errors.confirmPassword && (
-                  <p className="text-xs text-red-500 mt-1">
-                    {formik.errors.confirmPassword}
-                  </p>
-                )}
+              {formik.touched.confirmPassword && formik.errors.confirmPassword && (
+                <p className="text-xs text-red-500">{formik.errors.confirmPassword}</p>
+              )}
             </div>
 
-            {/* Submit */}
+            {/* Mode-specific fields */}
+            {mode === "student" ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {/* Class */}
+                <div>
+                  <label className="block text-xs text-gray-700 mb-1">Class</label>
+                  <input
+                    name="className"
+                    value={formik.values.className}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    className={inputClass}
+                    placeholder="e.g. 10th Grade"
+                  />
+                  {formik.touched.className && formik.errors.className && (
+                    <p className="text-xs text-red-500">{formik.errors.className}</p>
+                  )}
+                </div>
+                {/* Section */}
+                <div>
+                  <label className="block text-xs text-gray-700 mb-1">Section</label>
+                  <input
+                    name="section"
+                    value={formik.values.section}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    className={inputClass}
+                    placeholder="e.g. A"
+                  />
+                  {formik.touched.section && formik.errors.section && (
+                    <p className="text-xs text-red-500">{formik.errors.section}</p>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {/* Graduate In */}
+                <div>
+                  <label className="block text-xs text-gray-700 mb-1">
+                    Graduate In
+                  </label>
+                  <input
+                    name="graduateIn"
+                    value={formik.values.graduateIn}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    className={inputClass}
+                    placeholder="e.g. Computer Science"
+                  />
+                  {formik.touched.graduateIn && formik.errors.graduateIn && (
+                    <p className="text-xs text-red-500">{formik.errors.graduateIn}</p>
+                  )}
+                </div>
+                {/* Joining Date */}
+                <div>
+                  <label className="block text-xs text-gray-700 mb-1">
+                    Joining Date
+                  </label>
+                  <input
+                    type="date"
+                    name="joiningDate"
+                    value={formik.values.joiningDate}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    className={inputClass}
+                  />
+                  {formik.touched.joiningDate && formik.errors.joiningDate && (
+                    <p className="text-xs text-red-500">{formik.errors.joiningDate}</p>
+                  )}
+                </div>
+              </div>
+            )}
+
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white py-2 px-4 rounded-lg text-sm font-medium hover:from-emerald-600 hover:to-teal-700 transform hover:scale-105 transition duration-150 shadow-md flex items-center justify-center gap-2"
+              disabled={formik.isSubmitting}
+              className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white py-2 rounded-xl font-medium flex items-center justify-center gap-2 disabled:opacity-50"
             >
-              Create Account
-              <ArrowRight className="w-4 h-4" />
+              {mode === "admin" ? "Create Admin" : "Create Student"}
+              <ArrowRight className="w-4 h-4"/>
             </button>
           </form>
 
-          {/* Footer */}
-          <div className="mt-3 text-center">
-            <p className="text-gray-600 text-xs">
-              Already have an account?{" "}
-              <button
-                onClick={() => navigate("/login")}
-                className="text-teal-600 hover:text-teal-700 font-medium"
-              >
-                Sign in here
-              </button>
-            </p>
-          </div>
+          <p className="mt-4 text-center text-sm text-gray-600">
+            Already have an account?{" "}
+            <button
+              onClick={() => navigate("/login")}
+              className="text-teal-600 hover:underline"
+            >
+              Sign in
+            </button>
+          </p>
         </div>
       </div>
     </div>
@@ -246,4 +294,3 @@ const navigate = useNavigate();
 };
 
 export default Register;
-

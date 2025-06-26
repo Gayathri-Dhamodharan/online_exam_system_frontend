@@ -93,9 +93,8 @@ const Register = () => {
     validationSchema,
     onSubmit: async (values, { setSubmitting, setErrors }) => {
       try {
-        const endpoint = mode === 'admin'
-          ? '/user/admin/register'
-          : '/user/register';
+        const endpoint =
+          mode === "admin" ? "/api/user/admin/register" : "/api/user/register";
         await axios.post(endpoint, values);
         // on success, redirect to login
         navigate('/login');

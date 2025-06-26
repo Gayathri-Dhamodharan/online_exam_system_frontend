@@ -1,17 +1,23 @@
-// import { useSelector } from "react-redux";
-import { Navigate, Outlet } from "react-router-dom";
+// src/routes/PublicRoute.jsx
 import React from "react";
+import { Navigate, Outlet } from "react-router-dom";
 
 const PublicRoute = () => {
-  // MOCK token/role until Redux is connected
   const token = localStorage.getItem("token");
-  const role = localStorage.getItem("role"); // 'admin' or 'user'
+  const role  = localStorage.getItem("role"); // 'admin' or 'student'
 
-  // If logged in, redirect to corresponding dashboard
   if (token && role) {
-    return <Navigate to={`/${role}/dashboard`} />;
+    // map your app-paths explicitly:
+    if (role === "admin") {
+      return <Navigate to="/admin/dashboard" replace />;
+    }
+    if (role === "student") {
+      return <Navigate to="/user/dashboard" replace />;
+    }
+    // optionally handle other roles here…
   }
 
+  // no token → show login/register etc
   return <Outlet />;
 };
 

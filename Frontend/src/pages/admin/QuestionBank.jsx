@@ -11,7 +11,7 @@ import {
   X,
 } from "lucide-react";
 
-const QuestionBankSystem = () => {
+const QuestionBank = () => {
   const [currentScreen, setCurrentScreen] = useState("dashboard");
   const [selectedSubject, setSelectedSubject] = useState("");
   const [selectedGrade, setSelectedGrade] = useState("");
@@ -1093,4 +1093,4 @@ const QuestionBankSystem = () => {
   }
 };
 
-export default QuestionBankSystem;
+export default QuestionBank;

@@ -146,7 +146,7 @@ const UserLayout = () => {
             "& .MuiDrawer-paper": {
               width: drawerWidth,
               background:
-                "linear-gradient(to bottom, #b2dde1, #48a7a9, #006a70)",
+                "linear-gradient(to top, #006a70, rgb(44, 150, 152))",
               color: "#fff",
             },
           }}

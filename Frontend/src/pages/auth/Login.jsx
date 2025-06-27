@@ -169,7 +169,7 @@ const Login = () => {
     }),
     onSubmit: async (values, { setSubmitting, setErrors }) => {
   try {
-    const res = await axios.post("/user/login", values);
+    const res = await axios.post("/api/user/login", values);
     const { token, user } = res.data;
 
     localStorage.setItem("token", token);

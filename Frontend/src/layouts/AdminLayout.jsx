@@ -1,3 +1,4 @@
+// src/layouts/AdminLayout.jsx
 import React, { useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import {
@@ -30,30 +31,23 @@ import LogoutIcon from "@mui/icons-material/Logout";
 
 const drawerWidth = 240;
 
-const AdminLayout = () => {
+export default function AdminLayout() {
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileOpen, setMobileOpen]       = useState(false);
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
 
-  // raw from storage
-  const storedName = localStorage.getItem("name") || "gayathri dhamodharan";
-
+  // Format stored user info…
+  const storedName   = localStorage.getItem("name")   || "Admin User";
   const storedAvatar = localStorage.getItem("avatar") || "";
-
-  // Title-case it:
   const formattedName = storedName
     .split(" ")
-    .filter(Boolean)
-    .map(
-      (word) =>
-        word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-    )
+    .map(w => w[0].toUpperCase() + w.slice(1).toLowerCase())
     .join(" ");
 
   const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
-  const handleLogoutClick = () => setLogoutDialogOpen(true);
+  const handleLogoutClick  = () => setLogoutDialogOpen(true);
   const handleLogoutCancel = () => setLogoutDialogOpen(false);
   const handleLogoutConfirm = () => {
     localStorage.removeItem("token");
@@ -61,29 +55,28 @@ const AdminLayout = () => {
   };
 
   const menuItems = [
-    { text: "Dashboard", icon: <DashboardIcon />, path: "/admin/dashboard" },
-    {
-      text: "Question Bank",
-      icon: <LibraryBooksIcon />,
-      path: "/admin/questions",
-    },
-    { text: "Review", icon: <RateReviewIcon />, path: "/admin/results" },
-    { text: "Logout", icon: <LogoutIcon />, action: handleLogoutClick },
+    { text: "Dashboard",     icon: <DashboardIcon />,   path: "/admin/dashboard" },
+    { text: "Question Bank", icon: <LibraryBooksIcon />, path: "/admin/questions" },
+    { text: "Review",        icon: <RateReviewIcon />,   path: "/admin/results" },
+    { text: "Logout",        icon: <LogoutIcon />,      action: handleLogoutClick },
   ];
 
   const drawer = (
     <div>
       <Toolbar />
       <List>
-        {menuItems.map((item) => (
+        {menuItems.map(item => (
           <ListItem
             button
             key={item.text}
-            onClick={() =>
-              item.action
-                ? item.action()
-                : (navigate(item.path), isMobile && setMobileOpen(false))
-            }
+            onClick={() => {
+              if (item.action) {
+                item.action();
+              } else {
+                navigate(item.path);
+                if (isMobile) setMobileOpen(false);
+              }
+            }}
           >
             <ListItemIcon sx={{ color: "inherit" }}>
               {item.icon}
@@ -96,13 +89,14 @@ const AdminLayout = () => {
   );
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex", height: "100vh", overflow: "hidden" }}>
       <CssBaseline />
 
+      {/* AppBar */}
       <AppBar
         position="fixed"
         sx={{
-          zIndex: (theme) => theme.zIndex.drawer + 1,
+          zIndex: theme.zIndex.drawer + 1,
           background: "linear-gradient(to bottom, #006a70, rgb(44, 150, 152))",
         }}
       >
@@ -117,13 +111,10 @@ const AdminLayout = () => {
               <MenuIcon />
             </IconButton>
           )}
-
           <Typography variant="h6" noWrap>
             Admin Portal
           </Typography>
-
           <Box sx={{ flexGrow: 1 }} />
-
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <Typography variant="body1" sx={{ mr: 1 }}>
               {formattedName}
@@ -139,17 +130,15 @@ const AdminLayout = () => {
             >
               {formattedName
                 .split(" ")
-                .map((n) => n[0])
+                .map(n => n[0])
                 .join("")}
             </Avatar>
           </Box>
         </Toolbar>
       </AppBar>
 
-      <Box
-        component="nav"
-        sx={{ width: { md: drawerWidth }, flexShrink: { md: 0 } }}
-      >
+      {/* Sidebar */}
+      <Box component="nav" sx={{ width: { md: drawerWidth }, flexShrink: { md: 0 } }}>
         <Drawer
           variant="temporary"
           open={mobileOpen}
@@ -159,8 +148,7 @@ const AdminLayout = () => {
             display: { xs: "block", md: "none" },
             "& .MuiDrawer-paper": {
               width: drawerWidth,
-              background:
-                "linear-gradient(to bottom, #006a70, rgb(44, 150, 152))",
+              background: "linear-gradient(to bottom, #006a70, rgb(44, 150, 152))",
               color: "#fff",
             },
           }}
@@ -169,33 +157,38 @@ const AdminLayout = () => {
         </Drawer>
         <Drawer
           variant="permanent"
+          open
           sx={{
             display: { xs: "none", md: "block" },
             "& .MuiDrawer-paper": {
               width: drawerWidth,
-              background:
-                "linear-gradient(to bottom, #b2dde1, #48a7a9, #006a70)",
+              background: "linear-gradient(to bottom, #b2dde1, #48a7a9, #006a70)",
               color: "#fff",
+              top: 0,
             },
           }}
-          open
         >
           {drawer}
         </Drawer>
       </Box>
 
+      {/* Main content: use a Toolbar spacer, then scrollable Outlet */}
       <Box
         component="main"
         sx={{
           flexGrow: 1,
-          p: 1,
-          width: { md: `calc(100% - ${drawerWidth}px)` },
+          p: 2,
+          overflowY: "auto",
         }}
       >
+        {/* Spacer pushes content below AppBar */}
         <Toolbar />
+
+        {/* This is where all your nested routes (Dashboard, Subjects, etc.) render */}
         <Outlet />
       </Box>
 
+      {/* Logout confirmation */}
       <Dialog open={logoutDialogOpen} onClose={handleLogoutCancel}>
         <DialogTitle>Confirm Logout</DialogTitle>
         <DialogContent>
@@ -212,6 +205,4 @@ const AdminLayout = () => {
       </Dialog>
     </Box>
   );
-};
-
-export default AdminLayout;
+}

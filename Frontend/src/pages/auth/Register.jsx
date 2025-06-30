@@ -10,31 +10,11 @@ import { Mail, Lock, Eye, EyeOff, Users, ArrowRight } from 'lucide-react';
 axios.defaults.baseURL = 'http://localhost:5000';
 
 const classOptions = [
-  '1st Grade',
-  '2nd Grade',
-  '3rd Grade',
-  '4th Grade',
-  '5th Grade',
-  '6th Grade',
-  '7th Grade',
-  '8th Grade',
-  '9th Grade',
   '10th Grade',
-  '11th Grade',
   '12th Grade'
 ];
 
-const gradeOptions = ['A+','A','B','C','D','E','F'];
-
-const subjectOptions = [
-  'Computer Science',
-  'Mathematics',
-  'Physics',
-  'Chemistry',
-  'Biology',
-  'English Literature',
-  'History'
-];
+const gradeOptions = ['A','B','C'];
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -62,19 +42,9 @@ const Register = () => {
                        .oneOf([Yup.ref('password'), null], 'Must match')
                        .required('Required'),
     // student-only
-    class:    mode === 'student'
-              ? Yup.string().required('Class is required')
-              : Yup.string().notRequired(),
-    grade:    mode === 'student'
-              ? Yup.string().required('Grade is required')
-              : Yup.string().notRequired(),
-    // admin-only
-    graduateAt: mode === 'admin'
-                ? Yup.string().required('Subject is required')
-                : Yup.string().notRequired(),
-    joinDate:   mode === 'admin'
-                ? Yup.date().required('Joining date is required')
-                : Yup.date().notRequired()
+    class: Yup.string().required('Class is required'),
+    section: Yup.string().required('Section is required')
+             
   });
 
   const formik = useFormik({
@@ -86,16 +56,15 @@ const Register = () => {
       confirmPassword: '',
       role:            mode,
       class:           '',
-      grade:           '',
-      graduateAt:      '',
-      joinDate:        ''
+     section: 
+           ''
     },
     validationSchema,
     onSubmit: async (values, { setSubmitting, setErrors }) => {
       try {
         const endpoint = mode === 'admin'
-          ? '/user/admin/register'
-          : '/user/register';
+          ? 'api/user/admin/register'
+          : 'api/user/register';
         await axios.post(endpoint, values);
         // on success, redirect to login
         navigate('/login');
@@ -108,7 +77,8 @@ const Register = () => {
   });
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#f5f1e8] via-[#82e8d6] to-[#001922] px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br 
+    from-[#f5f1e8] via-[#82e8d6] to-[#001922] px-4">
       <div className="w-full max-w-md">
         <div className="bg-white/90 rounded-xl shadow-lg p-6">
           <div className="text-center mb-4">
@@ -218,7 +188,7 @@ const Register = () => {
             </div>
 
             {/* Role-specific fields */}
-            {mode === 'student' ? (
+            
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {/* Class Dropdown */}
                 <div>
@@ -241,15 +211,15 @@ const Register = () => {
                 </div>
                 {/* Grade Dropdown */}
                 <div>
-                  <label className="block text-xs text-gray-700 mb-1">Grade</label>
+                  <label className="block text-xs text-gray-700 mb-1">Section</label>
                   <select
-                    name="grade"
-                    value={formik.values.grade}
+                    name="section"
+                    value={formik.values.section}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     className={inputClass}
                   >
-                    <option value="">Select grade</option>
+                    <option value="">Select section</option>
                     {gradeOptions.map(g => (
                       <option key={g} value={g}>{g}</option>
                     ))}
@@ -259,45 +229,7 @@ const Register = () => {
                   )}
                 </div>
               </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {/* Graduate-Subject Dropdown */}
-                <div>
-                  <label className="block text-xs text-gray-700 mb-1">Graduate In</label>
-                  <select
-                    name="graduateAt"
-                    value={formik.values.graduateAt}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    className={inputClass}
-                  >
-                    <option value="">Select subject</option>
-                    {subjectOptions.map(s => (
-                      <option key={s} value={s}>{s}</option>
-                    ))}
-                  </select>
-                  {formik.touched.graduateAt && formik.errors.graduateAt && (
-                    <p className="text-xs text-red-500">{formik.errors.graduateAt}</p>
-                  )}
-                </div>
-                {/* Joining Date */}
-                <div>
-                  <label className="block text-xs text-gray-700 mb-1">Joining Date</label>
-                  <input
-                    type="date"
-                    name="joinDate"
-                    value={formik.values.joinDate}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    className={inputClass}
-                  />
-                  {formik.touched.joinDate && formik.errors.joinDate && (
-                    <p className="text-xs text-red-500">{formik.errors.joinDate}</p>
-                  )}
-                </div>
-              </div>
-            )}
-
+          
             <button
               type="submit"
               disabled={formik.isSubmitting}

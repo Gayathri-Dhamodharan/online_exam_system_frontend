@@ -1,563 +1,394 @@
-import React, { useState } from "react";
-import {
-  Search,
-  Filter,
-  Download,
-  Eye,
-  Calendar,
-  BookOpen,
-  Users,
-  TrendingUp,
-  BarChart3,
-  PieChart,
-} from "lucide-react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  PieChart as RechartsPieChart,
-  Pie,
-  Cell,
-  ScatterChart,
-  Scatter,
-} from "recharts";
+import React, { useState, useMemo } from 'react';
+import { Download, Filter, FileText, Table, User, BookOpen, GraduationCap } from 'lucide-react';
 
 const Review = () => {
-  const [filters, setFilters] = useState({
-    subject: "All Subjects",
-    grade: "All Grades",
-    scoreRange: "All Scores",
-    dateRange: "Last 30 days",
-    examStatus: "Completed",
-    searchTerm: "",
-  });
-
-  const [activeView, setActiveView] = useState("table");
-
   // Sample data
-  const studentsData = [
-    {
-      id: 1,
-      name: "Arjun Sharma",
-      studentId: "ST001",
-      subject: "Maths",
-      grade: 5,
-      examTitle: "Algebra Basics",
-      score: 85,
-      percentage: 85,
-      timeTaken: "45 min",
-      submissionDate: "2024-06-20",
-      status: "Pass",
-    },
-    {
-      id: 2,
-      name: "Priya Patel",
-      studentId: "ST002",
-      subject: "English",
-      grade: 6,
-      examTitle: "Grammar Test",
-      score: 92,
-      percentage: 92,
-      timeTaken: "38 min",
-      submissionDate: "2024-06-19",
-      status: "Pass",
-    },
-    {
-      id: 3,
-      name: "Ravi Kumar",
-      studentId: "ST003",
-      subject: "Tamil",
-      grade: 4,
-      examTitle: "Basic Tamil",
-      score: 67,
-      percentage: 67,
-      timeTaken: "52 min",
-      submissionDate: "2024-06-18",
-      status: "Pass",
-    },
-    {
-      id: 4,
-      name: "Meera Singh",
-      studentId: "ST004",
-      subject: "Science",
-      grade: 7,
-      examTitle: "Physics Quiz",
-      score: 78,
-      percentage: 78,
-      timeTaken: "42 min",
-      submissionDate: "2024-06-17",
-      status: "Pass",
-    },
-    {
-      id: 5,
-      name: "Karthik Raja",
-      studentId: "ST005",
-      subject: "Maths",
-      grade: 8,
-      examTitle: "Geometry",
-      score: 45,
-      percentage: 45,
-      timeTaken: "60 min",
-      submissionDate: "2024-06-16",
-      status: "Fail",
-    },
-  ];
+  const [studentsData] = useState([
+    { id: 1, name: 'John Smith', class: '10A', subject: 'Mathematics', exam: 'Mid-term', score: 85, maxScore: 100, date: '2024-03-15' },
+    { id: 2, name: 'John Smith', class: '10A', subject: 'Physics', exam: 'Mid-term', score: 78, maxScore: 100, date: '2024-03-15' },
+    { id: 3, name: 'John Smith', class: '10A', subject: 'Chemistry', exam: 'Mid-term', score: 92, maxScore: 100, date: '2024-03-15' },
+    { id: 4, name: 'Emily Johnson', class: '10A', subject: 'Mathematics', exam: 'Mid-term', score: 94, maxScore: 100, date: '2024-03-15' },
+    { id: 5, name: 'Emily Johnson', class: '10A', subject: 'Physics', exam: 'Mid-term', score: 88, maxScore: 100, date: '2024-03-15' },
+    { id: 6, name: 'Emily Johnson', class: '10A', subject: 'Chemistry', exam: 'Mid-term', score: 91, maxScore: 100, date: '2024-03-15' },
+    { id: 7, name: 'Michael Brown', class: '10B', subject: 'Mathematics', exam: 'Mid-term', score: 76, maxScore: 100, date: '2024-03-15' },
+    { id: 8, name: 'Michael Brown', class: '10B', subject: 'Physics', exam: 'Mid-term', score: 82, maxScore: 100, date: '2024-03-15' },
+    { id: 9, name: 'Sarah Davis', class: '11A', subject: 'Mathematics', exam: 'Final', score: 89, maxScore: 100, date: '2024-04-20' },
+    { id: 10, name: 'Sarah Davis', class: '11A', subject: 'Biology', exam: 'Final', score: 95, maxScore: 100, date: '2024-04-20' },
+    { id: 11, name: 'David Wilson', class: '11A', subject: 'Mathematics', exam: 'Final', score: 73, maxScore: 100, date: '2024-04-20' },
+    { id: 12, name: 'David Wilson', class: '11A', subject: 'Biology', exam: 'Final', score: 80, maxScore: 100, date: '2024-04-20' },
+    { id: 13, name: 'Lisa Anderson', class: '12A', subject: 'Mathematics', exam: 'Quarterly', score: 97, maxScore: 100, date: '2024-05-10' },
+    { id: 14, name: 'Lisa Anderson', class: '12A', subject: 'Computer Science', exam: 'Quarterly', score: 99, maxScore: 100, date: '2024-05-10' },
+    { id: 15, name: 'Robert Taylor', class: '12A', subject: 'Mathematics', exam: 'Quarterly', score: 84, maxScore: 100, date: '2024-05-10' },
+  ]);
 
-  const subjectDistribution = [
-    { subject: "English", count: 45, avgScore: 78 },
-    { subject: "Tamil", count: 38, avgScore: 72 },
-    { subject: "Maths", count: 52, avgScore: 69 },
-    { subject: "Science", count: 41, avgScore: 75 },
-  ];
+  const [selectedClass, setSelectedClass] = useState('');
+  const [selectedExam, setSelectedExam] = useState('');
+  const [viewMode, setViewMode] = useState('all');
+  const [selectedStudent, setSelectedStudent] = useState('');
 
-  const scoreDistribution = [
-    { range: "0-25%", count: 5, color: "#ef4444" },
-    { range: "26-50%", count: 12, color: "#f97316" },
-    { range: "51-75%", count: 28, color: "#eab308" },
-    { range: "76-100%", count: 35, color: "#22c55e" },
-  ];
+  // Get unique values
+  const uniqueClasses = [...new Set(studentsData.map(item => item.class))].sort();
+  const uniqueExams = [...new Set(studentsData.map(item => item.exam))].sort();
 
-  const performanceTrend = [
-    { week: "Week 1", avgScore: 72 },
-    { week: "Week 2", avgScore: 75 },
-    { week: "Week 3", avgScore: 78 },
-    { week: "Week 4", avgScore: 76 },
-  ];
-
-  const FilterButton = ({ label, options, current, onChange }) => (
-    <div className="relative">
-      <select
-        value={current}
-        onChange={(e) => onChange(e.target.value)}
-        className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-      >
-        {options.map((option) => (
-          <option key={option} value={option}>
-            {option}
-          </option>
-        ))}
-      </select>
-      <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-        <Filter className="h-4 w-4 text-gray-400" />
-      </div>
-    </div>
-  );
-
-  const StatCard = ({ icon: Icon, title, value, subtitle, color = "teal" }) => (
-    <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-teal-500">
-      <div className="flex items-center space-x-4">
-        <div
-          className={`p-3 bg-gradient-to-br from-${color}-100 to-${color}-200 rounded-lg`}
-        >
-          <Icon className={`h-6 w-6 text-${color}-700`} />
-        </div>
-        <div>
-          <p className="text-sm font-medium text-gray-600">{title}</p>
-          <p className="text-2xl font-bold text-gray-900">{value}</p>
-          {subtitle && <p className="text-xs text-gray-500">{subtitle}</p>}
-        </div>
-      </div>
-    </div>
-  );
-
-  const getStatusBadge = (status) => {
-    const baseClasses = "px-3 py-1 rounded-full text-xs font-medium";
-    if (status === "Pass") {
-      return `${baseClasses} bg-green-100 text-green-800`;
+  // Filter data by class and exam
+  const filteredData = useMemo(() => {
+    let data = studentsData;
+    if (selectedClass) {
+      data = data.filter(item => item.class === selectedClass);
     }
-    return `${baseClasses} bg-red-100 text-red-800`;
+    if (selectedExam) {
+      data = data.filter(item => item.exam === selectedExam);
+    }
+    return data;
+  }, [studentsData, selectedClass, selectedExam]);
+
+  // Get students in filtered data
+  const studentsInClass = useMemo(() => {
+    return [...new Set(filteredData.map(item => item.name))].sort();
+  }, [filteredData]);
+
+  // Get data based on view mode
+  const displayData = useMemo(() => {
+    if (viewMode === 'byStudent' && selectedStudent) {
+      return filteredData.filter(item => item.name === selectedStudent);
+    }
+    return filteredData;
+  }, [filteredData, viewMode, selectedStudent]);
+
+  // Calculate statistics
+  const stats = useMemo(() => {
+    if (displayData.length === 0) return { totalStudents: 0, avgScore: 0, totalExams: 0 };
+    
+    const uniqueStudentsCount = new Set(displayData.map(item => item.name)).size;
+    const totalScore = displayData.reduce((sum, item) => sum + item.score, 0);
+    const avgScore = totalScore / displayData.length;
+    
+    return {
+      totalStudents: uniqueStudentsCount,
+      avgScore: avgScore.toFixed(1),
+      totalExams: displayData.length
+    };
+  }, [displayData]);
+
+  // Export functions
+  const exportToPDF = () => {
+    const content = generateReportContent();
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `student-scores-${selectedClass || 'all'}-${Date.now()}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
-  const getScoreColor = (percentage) => {
-    if (percentage >= 75) return "text-green-600";
-    if (percentage >= 50) return "text-yellow-600";
-    return "text-red-600";
+  const exportToCSV = () => {
+    const headers = ['Name', 'Class', 'Subject', 'Exam', 'Score', 'Max Score', 'Percentage', 'Date'];
+    const csvContent = [
+      headers.join(','),
+      ...displayData.map(item => [
+        item.name,
+        item.class,
+        item.subject,
+        item.exam,
+        item.score,
+        item.maxScore,
+        `${((item.score / item.maxScore) * 100).toFixed(1)}%`,
+        item.date
+      ].join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `student-scores-${selectedClass || 'all'}-${Date.now()}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const generateReportContent = () => {
+    const title = viewMode === 'byStudent' 
+      ? `Individual Student Report - ${selectedStudent}`
+      : `Class Report - ${selectedClass || 'All Classes'}`;
+    
+    let content = `${title}\n`;
+    content += `Generated on: ${new Date().toLocaleDateString()}\n\n`;
+    content += `Statistics:\n`;
+    content += `Total Students: ${stats.totalStudents}\n`;
+    content += `Total Exams: ${stats.totalExams}\n`;
+    content += `Average Score: ${stats.avgScore}%\n\n`;
+    content += `Detailed Scores:\n`;
+    content += `${'='.repeat(80)}\n`;
+    
+    displayData.forEach(item => {
+      content += `Student: ${item.name}\n`;
+      content += `Class: ${item.class} | Subject: ${item.subject} | Exam: ${item.exam}\n`;
+      content += `Score: ${item.score}/${item.maxScore} (${((item.score/item.maxScore)*100).toFixed(1)}%)\n`;
+      content += `Date: ${item.date}\n`;
+      content += `${'-'.repeat(40)}\n`;
+    });
+    
+    return content;
+  };
+
+  const sendStudentPDF = (studentName) => {
+    const studentData = filteredData.filter(item => item.name === studentName);
+    const content = generateStudentPDFContent(studentName, studentData);
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${studentName.replace(' ', '_')}-scores-report.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+    alert(`Report for ${studentName} has been downloaded!`);
+  };
+
+  const generateStudentPDFContent = (studentName, data) => {
+    let content = `STUDENT SCORE REPORT\n`;
+    content += `Student Name: ${studentName}\n`;
+    content += `Class: ${data[0]?.class || 'N/A'}\n`;
+    content += `Report Generated: ${new Date().toLocaleDateString()}\n\n`;
+    content += `${'='.repeat(60)}\n`;
+    content += `EXAM SCORES:\n`;
+    content += `${'='.repeat(60)}\n\n`;
+    
+    data.forEach(item => {
+      content += `Subject: ${item.subject}\n`;
+      content += `Exam: ${item.exam}\n`;
+      content += `Score: ${item.score}/${item.maxScore} (${((item.score/item.maxScore)*100).toFixed(1)}%)\n`;
+      content += `Date: ${item.date}\n`;
+      content += `${'-'.repeat(30)}\n`;
+    });
+    
+    const totalScore = data.reduce((sum, item) => sum + item.score, 0);
+    const totalMax = data.reduce((sum, item) => sum + item.maxScore, 0);
+    const overallPercentage = ((totalScore / totalMax) * 100).toFixed(1);
+    
+    content += `\nOVERALL PERFORMANCE:\n`;
+    content += `Total Score: ${totalScore}/${totalMax}\n`;
+    content += `Overall Percentage: ${overallPercentage}%\n`;
+    
+    return content;
+  };
+
+  const getScoreColor = (score, maxScore) => {
+    const percentage = (score / maxScore) * 100;
+    if (percentage >= 90) return 'text-green-600';
+    if (percentage >= 75) return 'text-blue-600';
+    if (percentage >= 60) return 'text-yellow-600';
+    return 'text-red-600';
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 to-blue-50">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-teal-600 to-teal-800 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
-            <div>
-              <h1 className="text-3xl font-bold text-white">
-                Results & Analytics
-              </h1>
-              <p className="text-teal-100">
-                Comprehensive exam results and performance analysis
-              </p>
-            </div>
-            <div className="flex items-center space-x-4">
-              <button className="bg-teal-500 hover:bg-teal-400 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
-                <Download className="h-4 w-4" />
-                <span>Export Report</span>
+    <div className="min-h-screen p-6 bg-gray-50" >
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className=" p-6 mb-6 flex justify-between">
+          <div>
+             <h1 className="text-3xl font-bold text-slate-800 mb-2 flex items-center gap-3">
+            <GraduationCap className="text-green-600" size={36} />
+             Review Student Scores 
+          </h1>
+          <p className="text-slate-600">Manage and export student performance data</p>
+          </div>
+          <div className='gap-4 px-4'>
+            <select
+                value={selectedClass}
+                onChange={(e) => {
+                  setSelectedClass(e.target.value);
+                  setSelectedStudent('');
+                  setViewMode('all');
+                }}
+                className="px-4 py-2 mx-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              >
+                <option value="">All Classes</option>
+                {uniqueClasses.map(cls => (
+                  <option key={cls} value={cls}>{cls}</option>
+                ))}
+              </select>
+
+               <select
+                value={selectedExam}
+                onChange={(e) => {
+                  setSelectedExam(e.target.value);
+                  setSelectedStudent('');
+                  setViewMode('all');
+                }}
+                className="px-4 py-2 mx-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              >
+                <option value="">All Exams</option>
+                {uniqueExams.map(exam => (
+                  <option key={exam} value={exam}>{exam}</option>
+                ))}
+              </select>
+          </div>
+         
+        </div>
+
+       
+        {/* View Mode Selection */}
+        {(selectedClass || selectedExam) && (
+          <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6 mb-6">
+            <h3 className="font-semibold text-slate-700 mb-4">View Options:</h3>
+            <div className="flex flex-wrap gap-4">
+              <button
+                onClick={() => {
+                  setViewMode('all');
+                  setSelectedStudent('');
+                }}
+                className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
+                  viewMode === 'all' 
+                    ? 'bg-green-600 text-white' 
+                    : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
+                }`}
+              >
+                <Table size={18} />
+                All Students & Subjects
+              </button>
+              <button
+                onClick={() => setViewMode('byStudent')}
+                className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
+                  viewMode === 'byStudent' 
+                    ? 'bg-green-600 text-white' 
+                    : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
+                }`}
+              >
+                <User size={18} />
+                By Student
+              </button>
+              <button
+                onClick={() => setViewMode('bySubject')}
+                className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
+                  viewMode === 'bySubject' 
+                    ? 'bg-green-600 text-white' 
+                    : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
+                }`}
+              >
+                <BookOpen size={18} />
+                By Subject
               </button>
             </div>
-          </div>
-        </div>
-      </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Filters Section */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            Filter & Search
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-4">
-            <FilterButton
-              label="Subject"
-              options={["All Subjects", "English", "Tamil", "Maths", "Science"]}
-              current={filters.subject}
-              onChange={(value) => setFilters({ ...filters, subject: value })}
-            />
-            <FilterButton
-              label="Grade"
-              options={["All Grades", "Grade 1-3", "Grade 4-6", "Grade 7-10"]}
-              current={filters.grade}
-              onChange={(value) => setFilters({ ...filters, grade: value })}
-            />
-            <FilterButton
-              label="Score Range"
-              options={["All Scores", "0-25%", "26-50%", "51-75%", "76-100%"]}
-              current={filters.scoreRange}
-              onChange={(value) =>
-                setFilters({ ...filters, scoreRange: value })
-              }
-            />
-            <FilterButton
-              label="Date Range"
-              options={[
-                "Last 7 days",
-                "Last 30 days",
-                "Last 3 months",
-                "Custom",
-              ]}
-              current={filters.dateRange}
-              onChange={(value) => setFilters({ ...filters, dateRange: value })}
-            />
-            <FilterButton
-              label="Status"
-              options={[
-                "All Status",
-                "Completed",
-                "In Progress",
-                "Not Started",
-              ]}
-              current={filters.examStatus}
-              onChange={(value) =>
-                setFilters({ ...filters, examStatus: value })
-              }
-            />
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search students..."
-                value={filters.searchTerm}
-                onChange={(e) =>
-                  setFilters({ ...filters, searchTerm: e.target.value })
-                }
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Overview Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
-          <StatCard
-            icon={Users}
-            title="Students Appeared"
-            value="176"
-            subtitle="This period"
-          />
-          <StatCard
-            icon={TrendingUp}
-            title="Average Score"
-            value="74.2%"
-            subtitle="↑ 3.2% from last month"
-          />
-          <StatCard
-            icon={BarChart3}
-            title="Highest Score"
-            value="98%"
-            subtitle="Priya Patel - English"
-          />
-          <StatCard
-            icon={PieChart}
-            title="Pass Rate"
-            value="89.2%"
-            subtitle="157 out of 176 students"
-          />
-          <StatCard
-            icon={Calendar}
-            title="Completion Rate"
-            value="94.3%"
-            subtitle="166 completed exams"
-          />
-        </div>
-
-        {/* View Toggle */}
-        <div className="flex space-x-4 mb-6">
-          <button
-            onClick={() => setActiveView("table")}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              activeView === "table"
-                ? "bg-teal-600 text-white"
-                : "bg-white text-gray-600 hover:bg-gray-50"
-            }`}
-          >
-            Results Table
-          </button>
-          <button
-            onClick={() => setActiveView("analytics")}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              activeView === "analytics"
-                ? "bg-teal-600 text-white"
-                : "bg-white text-gray-600 hover:bg-gray-50"
-            }`}
-          >
-            Analytics View
-          </button>
-        </div>
-
-        {activeView === "table" ? (
-          /* Results Table */
-          <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gradient-to-r from-teal-500 to-teal-600 text-white">
-                  <tr>
-                    <th className="px-6 py-4 text-left text-sm font-semibold">
-                      Student
-                    </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold">
-                      Subject & Grade
-                    </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold">
-                      Exam Title
-                    </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold">
-                      Score
-                    </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold">
-                      Time Taken
-                    </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold">
-                      Submission
-                    </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold">
-                      Status
-                    </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {studentsData.map((student, index) => (
-                    <tr
-                      key={student.id}
-                      className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}
-                    >
-                      <td className="px-6 py-4">
-                        <div>
-                          <div className="font-medium text-gray-900">
-                            {student.name}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            {student.studentId}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="text-sm text-gray-900">
-                          {student.subject}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          Grade {student.grade}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-900">
-                        {student.examTitle}
-                      </td>
-                      <td className="px-6 py-4">
-                        <div
-                          className={`text-lg font-semibold ${getScoreColor(
-                            student.percentage
-                          )}`}
-                        >
-                          {student.percentage}%
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-500">
-                        {student.timeTaken}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-500">
-                        {student.submissionDate}
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className={getStatusBadge(student.status)}>
-                          {student.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex space-x-2">
-                          <button className="text-teal-600 hover:text-teal-700">
-                            <Eye className="h-4 w-4" />
-                          </button>
-                          <button className="text-gray-600 hover:text-gray-700">
-                            <Download className="h-4 w-4" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
+            {/* Student Selection for Individual View */}
+            {viewMode === 'byStudent' && (
+              <div className="mt-4">
+                <label className="block font-semibold text-slate-700 mb-2">Select Student:</label>
+                <select
+                  value={selectedStudent}
+                  onChange={(e) => setSelectedStudent(e.target.value)}
+                  className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                >
+                  <option value="">Choose a student...</option>
+                  {studentsInClass.map(student => (
+                    <option key={student} value={student}>{student}</option>
                   ))}
-                </tbody>
-              </table>
-            </div>
+                </select>
+              </div>
+            )}
           </div>
-        ) : (
-          /* Analytics View */
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Subject Performance */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Subject-wise Performance
-              </h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={subjectDistribution}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="subject" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar
-                    dataKey="avgScore"
-                    fill="url(#tealGradient)"
-                    radius={[4, 4, 0, 0]}
-                  />
-                  <defs>
-                    <linearGradient
-                      id="tealGradient"
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1"
-                    >
-                      <stop offset="0%" stopColor="#14b8a6" />
-                      <stop offset="100%" stopColor="#0d9488" />
-                    </linearGradient>
-                  </defs>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+        )}
 
-            {/* Score Distribution */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Score Distribution
-              </h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <RechartsPieChart>
-                  <Pie
-                    data={scoreDistribution}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={120}
-                    paddingAngle={5}
-                    dataKey="count"
-                  >
-                    {scoreDistribution.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </RechartsPieChart>
-              </ResponsiveContainer>
-              <div className="mt-4 grid grid-cols-2 gap-4">
-                {scoreDistribution.map((item, index) => (
-                  <div key={index} className="flex items-center space-x-2">
-                    <div
-                      className="w-3 h-3 rounded-full"
-                      style={{ backgroundColor: item.color }}
-                    ></div>
-                    <span className="text-sm text-gray-600">{item.range}</span>
-                    <span className="text-sm font-medium">{item.count}</span>
-                  </div>
+        {/* Statistics */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6">
+            <h3 className="text-lg font-semibold text-slate-700 mb-2">Total Students</h3>
+            <p className="text-3xl font-bold text-green-600">{stats.totalStudents}</p>
+          </div>
+          <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6">
+            <h3 className="text-lg font-semibold text-slate-700 mb-2">Average Score</h3>
+            <p className="text-3xl font-bold text-green-600">{stats.avgScore}%</p>
+          </div>
+          <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6">
+            <h3 className="text-lg font-semibold text-slate-700 mb-2">Total Exams</h3>
+            <p className="text-3xl font-bold text-green-600">{stats.totalExams}</p>
+          </div>
+        </div>
+
+        {/* Export Buttons */}
+        {/* <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6 mb-6">
+          <h3 className="font-semibold text-slate-700 mb-4">Export Options:</h3>
+          <div className="flex flex-wrap gap-4">
+            <button
+              onClick={exportToPDF}
+              className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 flex items-center gap-2 transition-colors"
+            >
+              <FileText size={20} />
+              Export PDF Report
+            </button>
+            <button
+              onClick={exportToCSV}
+              className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2 transition-colors"
+            >
+              <Download size={20} />
+              Export CSV
+            </button>
+          </div>
+        </div> */}
+
+        {/* Data Table */}
+        <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden">
+          <div className="p-6 border-b border-gray-200">
+            <h3 className="text-xl font-semibold text-slate-800">
+              {viewMode === 'byStudent' && selectedStudent 
+                ? `Scores for ${selectedStudent}` 
+                : `${selectedClass ? `Class ${selectedClass}` : 'All Classes'} ${selectedExam ? `- ${selectedExam}` : '- All Exams'}`}
+            </h3>
+          </div>
+          
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-green-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Student</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Class</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Subject</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Exam</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Score</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Percentage</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Date</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-slate-200">
+                {displayData.map((item) => (
+                  <tr key={item.id} className="hover:bg-slate-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">{item.name}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">{item.class}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">{item.subject}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">{item.exam}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <span className={`font-semibold ${getScoreColor(item.score, item.maxScore)}`}>
+                        {item.score}/{item.maxScore}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <span className={`font-semibold ${getScoreColor(item.score, item.maxScore)}`}>
+                        {((item.score / item.maxScore) * 100).toFixed(1)}%
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.date}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <button
+                        onClick={() => sendStudentPDF(item.name)}
+                        className="text-cyan-600 hover:text-cyan-900 flex items-center gap-1"
+                        title="Send individual report"
+                      >
+                        <FileText size={16} />
+                        Send PDF
+                      </button>
+                    </td>
+                  </tr>
                 ))}
-              </div>
-            </div>
+              </tbody>
+            </table>
+          </div>
+        </div>
 
-            {/* Performance Trend */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Performance Trend
-              </h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={performanceTrend}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="week" />
-                  <YAxis />
-                  <Tooltip />
-                  <Line
-                    type="monotone"
-                    dataKey="avgScore"
-                    stroke="#0d9488"
-                    strokeWidth={3}
-                    dot={{ fill: "#0d9488" }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-
-            {/* Individual Performance Analysis */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Individual Performance Analysis
-              </h3>
-              <div className="space-y-4">
-                <div className="p-4 bg-gray-50 rounded-lg">
-                  <h4 className="font-medium text-gray-900">Top Performers</h4>
-                  <div className="mt-2 space-y-2">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">Priya Patel</span>
-                      <span className="text-sm font-medium text-green-600">
-                        92%
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">
-                        Arjun Sharma
-                      </span>
-                      <span className="text-sm font-medium text-green-600">
-                        85%
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <div className="p-4 bg-gray-50 rounded-lg">
-                  <h4 className="font-medium text-gray-900">Needs Attention</h4>
-                  <div className="mt-2 space-y-2">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">
-                        Karthik Raja
-                      </span>
-                      <span className="text-sm font-medium text-red-600">
-                        45%
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+        {displayData.length === 0 && (
+          <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-12 text-center">
+            <p className="text-gray-500 text-lg">No data found. Please select a class to view student scores.</p>
           </div>
         )}
       </div>
@@ -566,3 +397,333 @@ const Review = () => {
 };
 
 export default Review;
+
+// import React, { useState, useMemo, useEffect } from "react";
+// import { FileText, User, BookOpen, GraduationCap } from "lucide-react";
+// import { getAllResults } from "../../service/api";
+
+// const Review = () => {
+//   const [studentsData, setStudentsData] = useState([]);
+//   const [selectedClass, setSelectedClass] = useState("");
+//   const [selectedExam, setSelectedExam] = useState("");
+//   const [viewMode, setViewMode] = useState("all");
+//   const [selectedStudent, setSelectedStudent] = useState("");
+
+//   useEffect(() => {
+//     getAllResults().then((res) => {
+//       // flatten into table rows
+//       setStudentsData(
+//         res.data.map((rec) => ({
+//           id: rec._id,
+//           name: `${rec.student.firstName} ${rec.student.lastName}`,
+//           class: rec.student.class,
+//           subject: rec.examTemplate.subject.name || rec.examTemplate.subject,
+//           exam: rec.examTemplate.title,
+//           score: rec.obtainedMarks,
+//           maxScore: rec.examTemplate.totalMark,
+//           date: new Date(rec.updatedAt).toLocaleDateString(),
+//         }))
+//       );
+//     });
+//   }, []);
+
+//   // filtering & stats
+//   const uniqueClasses = useMemo(
+//     () => [...new Set(studentsData.map((d) => d.class))].sort(),
+//     [studentsData]
+//   );
+//   const uniqueExams = useMemo(
+//     () => [...new Set(studentsData.map((d) => d.exam))].sort(),
+//     [studentsData]
+//   );
+
+//   const filteredData = useMemo(() => {
+//     return studentsData.filter((d) => {
+//       return (
+//         (!selectedClass || d.class === selectedClass) &&
+//         (!selectedExam || d.exam === selectedExam)
+//       );
+//     });
+//   }, [studentsData, selectedClass, selectedExam]);
+
+//   const studentsInClass = useMemo(() => {
+//     return [...new Set(filteredData.map((d) => d.name))].sort();
+//   }, [filteredData]);
+
+//   const displayData = useMemo(() => {
+//     if (viewMode === "byStudent" && selectedStudent) {
+//       return filteredData.filter((d) => d.name === selectedStudent);
+//     }
+//     return filteredData;
+//   }, [filteredData, viewMode, selectedStudent]);
+
+//   const stats = useMemo(() => {
+//     if (displayData.length === 0)
+//       return { totalStudents: 0, avgScore: 0, totalExams: 0 };
+//     const uniqueStudentsCount = new Set(
+//       displayData.map((d) => d.name)
+//     ).size;
+//     const totalScore = displayData.reduce((s, d) => s + d.score, 0);
+//     const avgScore = totalScore / displayData.length;
+//     return {
+//       totalStudents: uniqueStudentsCount,
+//       avgScore: avgScore.toFixed(1),
+//       totalExams: displayData.length,
+//     };
+//   }, [displayData]);
+
+//   const sendStudentPDF = (studentName) => {
+//     alert(`Implement send PDF for ${studentName}`);
+//   };
+
+//   const getScoreColor = (score, max) => {
+//     const p = (score / max) * 100;
+//     if (p >= 90) return "text-green-600";
+//     if (p >= 75) return "text-blue-600";
+//     if (p >= 60) return "text-yellow-600";
+//     return "text-red-600";
+//   };
+
+//   return (
+//     <div className="min-h-screen p-6 bg-gray-50">
+//       <div className="max-w-7xl mx-auto">
+//         {/* Header */}
+//         <div className="p-6 mb-6 flex justify-between">
+//           <div>
+//             <h1 className="text-3xl font-bold text-slate-800 mb-2 flex items-center gap-3">
+//               <GraduationCap className="text-green-600" size={36} />
+//               Review Student Scores
+//             </h1>
+//             <p className="text-slate-600">
+//               Manage and export student performance data
+//             </p>
+//           </div>
+//           <div className="gap-4 px-4">
+//             <select
+//               value={selectedClass}
+//               onChange={(e) => {
+//                 setSelectedClass(e.target.value);
+//                 setSelectedStudent("");
+//                 setViewMode("all");
+//               }}
+//               className="px-4 py-2 mx-2 border border-slate-300 rounded-lg"
+//             >
+//               <option value="">All Classes</option>
+//               {uniqueClasses.map((cls) => (
+//                 <option key={cls} value={cls}>
+//                   {cls}
+//                 </option>
+//               ))}
+//             </select>
+
+//             <select
+//               value={selectedExam}
+//               onChange={(e) => {
+//                 setSelectedExam(e.target.value);
+//                 setSelectedStudent("");
+//                 setViewMode("all");
+//               }}
+//               className="px-4 py-2 mx-2 border border-slate-300 rounded-lg"
+//             >
+//               <option value="">All Exams</option>
+//               {uniqueExams.map((ex) => (
+//                 <option key={ex} value={ex}>
+//                   {ex}
+//                 </option>
+//               ))}
+//             </select>
+//           </div>
+//         </div>
+
+//         {/* View Mode */}
+//         {(selectedClass || selectedExam) && (
+//           <div className="bg-white p-6 mb-6 rounded-xl shadow-lg">
+//             <h3 className="font-semibold text-slate-700 mb-4">View Options:</h3>
+//             <div className="flex flex-wrap gap-4">
+//               <button
+//                 onClick={() => {
+//                   setViewMode("all");
+//                   setSelectedStudent("");
+//                 }}
+//                 className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
+//                   viewMode === "all"
+//                     ? "bg-green-600 text-white"
+//                     : "bg-slate-200 text-slate-700"
+//                 }`}
+//               >
+//                 <Table size={18} />
+//                 All Students & Subjects
+//               </button>
+//               <button
+//                 onClick={() => setViewMode("byStudent")}
+//                 className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
+//                   viewMode === "byStudent"
+//                     ? "bg-green-600 text-white"
+//                     : "bg-slate-200 text-slate-700"
+//                 }`}
+//               >
+//                 <User size={18} />
+//                 By Student
+//               </button>
+//               <button
+//                 onClick={() => setViewMode("bySubject")}
+//                 className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
+//                   viewMode === "bySubject"
+//                     ? "bg-green-600 text-white"
+//                     : "bg-slate-200 text-slate-700"
+//                 }`}
+//               >
+//                 <BookOpen size={18} />
+//                 By Subject
+//               </button>
+//             </div>
+
+//             {viewMode === "byStudent" && (
+//               <div className="mt-4">
+//                 <label className="font-semibold text-slate-700 mb-2 block">
+//                   Select Student:
+//                 </label>
+//                 <select
+//                   value={selectedStudent}
+//                   onChange={(e) => setSelectedStudent(e.target.value)}
+//                   className="px-4 py-2 border border-slate-300 rounded-lg"
+//                 >
+//                   <option value="">Choose a student...</option>
+//                   {studentsInClass.map((st) => (
+//                     <option key={st} value={st}>
+//                       {st}
+//                     </option>
+//                   ))}
+//                 </select>
+//               </div>
+//             )}
+//           </div>
+//         )}
+
+//         {/* Stats */}
+//         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+//           <div className="bg-white p-6 rounded-xl shadow-lg text-center">
+//             <h3 className="text-lg font-semibold text-slate-700 mb-2">
+//               Total Students
+//             </h3>
+//             <p className="text-3xl font-bold text-green-600">
+//               {stats.totalStudents}
+//             </p>
+//           </div>
+//           <div className="bg-white p-6 rounded-xl shadow-lg text-center">
+//             <h3 className="text-lg font-semibold text-slate-700 mb-2">
+//               Average Score
+//             </h3>
+//             <p className="text-3xl font-bold text-green-600">
+//               {stats.avgScore}%
+//             </p>
+//           </div>
+//           <div className="bg-white p-6 rounded-xl shadow-lg text-center">
+//             <h3 className="text-lg font-semibold text-slate-700 mb-2">
+//               Total Exams
+//             </h3>
+//             <p className="text-3xl font-bold text-green-600">
+//               {stats.totalExams}
+//             </p>
+//           </div>
+//         </div>
+
+//         {/* Data Table */}
+//         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+//           <div className="p-6 border-b border-gray-200">
+//             <h3 className="text-xl font-semibold text-slate-800">
+//               {viewMode === "byStudent" && selectedStudent
+//                 ? `Scores for ${selectedStudent}`
+//                 : `${selectedClass || "All Classes"} ${
+//                     selectedExam ? `- ${selectedExam}` : ""
+//                   }`}
+//             </h3>
+//           </div>
+//           <div className="overflow-x-auto">
+//             <table className="w-full">
+//               <thead className="bg-green-50">
+//                 <tr>
+//                   {[
+//                     "Student",
+//                     "Class",
+//                     "Subject",
+//                     "Exam",
+//                     "Score",
+//                     "Percentage",
+//                     "Date",
+//                     "Actions",
+//                   ].map((h) => (
+//                     <th
+//                       key={h}
+//                       className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider"
+//                     >
+//                       {h}
+//                     </th>
+//                   ))}
+//                 </tr>
+//               </thead>
+//               <tbody className="bg-white divide-y divide-slate-200">
+//                 {displayData.map((item) => (
+//                   <tr key={item.id} className="hover:bg-slate-50">
+//                     <td className="px-6 py-4 text-sm font-medium text-slate-900">
+//                       {item.name}
+//                     </td>
+//                     <td className="px-6 py-4 text-sm text-slate-500">
+//                       {item.class}
+//                     </td>
+//                     <td className="px-6 py-4 text-sm text-slate-500">
+//                       {item.subject}
+//                     </td>
+//                     <td className="px-6 py-4 text-sm text-slate-500">
+//                       {item.exam}
+//                     </td>
+//                     <td className="px-6 py-4 text-sm">
+//                       <span
+//                         className={`font-semibold ${getScoreColor(
+//                           item.score,
+//                           item.maxScore
+//                         )}`}
+//                       >
+//                         {item.score}/{item.maxScore}
+//                       </span>
+//                     </td>
+//                     <td className="px-6 py-4 text-sm">
+//                       <span
+//                         className={`font-semibold ${getScoreColor(
+//                           item.score,
+//                           item.maxScore
+//                         )}`}
+//                       >
+//                         {((item.score / item.maxScore) * 100).toFixed(1)}%
+//                       </span>
+//                     </td>
+//                     <td className="px-6 py-4 text-sm text-gray-500">
+//                       {item.date}
+//                     </td>
+//                     <td className="px-6 py-4 text-sm">
+//                       <button
+//                         onClick={() => sendStudentPDF(item.name)}
+//                         className="text-cyan-600 hover:text-cyan-900 flex items-center gap-1"
+//                         title="Send individual report"
+//                       >
+//                         <FileText size={16} />
+//                         Send PDF
+//                       </button>
+//                     </td>
+//                   </tr>
+//                 ))}
+//               </tbody>
+//             </table>
+//           </div>
+//           {displayData.length === 0 && (
+//             <div className="p-12 text-center text-gray-500">
+//               No data found. Please select a class or exam above.
+//             </div>
+//           )}
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Review;

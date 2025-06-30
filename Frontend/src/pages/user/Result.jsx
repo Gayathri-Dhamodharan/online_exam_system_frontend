@@ -387,3 +387,46 @@ const Result = () => {
 };
 
 export default Result;
+
+// import React, { useState, useEffect } from "react";
+// import { useParams } from "react-router-dom";
+// import api from "../../service/api";
+// import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
+
+// export default function Result() {
+//   const { id } = useParams();
+//   const [r, setR] = useState(null);
+
+//   useEffect(()=>{
+//     api.get(`/student/results/${id}`)
+//       .then(res=>setR(res.data))
+//       .catch(()=>alert('Load failed'));
+//   },[id]);
+
+//   if(!r) return <p>Loading…</p>;
+
+//   const { assignedExam, correctCount, wrongCount, obtainedMarks } = r;
+//   const totalMarks = assignedExam.examTemplate.questions.reduce((s,q)=>s+q.mark,0);
+
+//   const data = [
+//     { name:'Correct', value:correctCount, color:'#10B981' },
+//     { name:'Wrong',   value:wrongCount,   color:'#EF4444' }
+//   ];
+
+//   return (
+//     <div className="p-8">
+//       <h2 className="text-xl mb-4">Result: {assignedExam.examTemplate.title}</h2>
+//       <ResponsiveContainer width="100%" height={200}>
+//         <PieChart>
+//           <Pie data={data} dataKey="value" cx="50%" cy="50%" outerRadius={80}>
+//             {data.map((e,i)=><Cell key={i} fill={e.color}/>)}
+//           </Pie>
+//           <Tooltip/>
+//           <Legend/>
+//         </PieChart>
+//       </ResponsiveContainer>
+//       <p className="mt-4">Score: {obtainedMarks} / {totalMarks}</p>
+//       <p>Correct: {correctCount} | Wrong: {wrongCount}</p>
+//     </div>
+//   );
+// }

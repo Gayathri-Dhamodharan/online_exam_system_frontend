@@ -1,52 +1,74 @@
+// src/routes/AppRoutes.jsx
+import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
+
 import PublicRoute from "./PublicRoute";
-import RoleSelection from "../layouts/RoleSelection";
+import ProtectedRoute from "./ProtectedRoute";
+
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
-import QuestionBank from "../pages/admin/QuestionBank";
-import QuestionPaper from "../pages/admin/QuestionPaper";
-import AdminResult from "../pages/admin/AdminResult";
-import AdminDashboard from "../pages/admin/AdminDashboard";
-import UserDashboard from "../pages/user/UserDashboard";
-import UserResult from "../pages/user/UserResult";
-import Exam from "../pages/user/Exam";
-import PrivateRoute from "./PrivateRoute";
+import Unauthorized from "../pages/auth/Unauthorized";
+
 import AdminLayout from "../layouts/AdminLayout";
+import AdminDashboard from "../pages/admin/AdminDashboard";
+import Review from "../pages/admin/Review";
+
 import UserLayout from "../layouts/UserLayout";
+import UserDashboard from "../pages/user/UserDashboard";
+import Exam from "../pages/user/Exam";
+import Result from "../pages/user/Result";
 
-
+// ── Split QuestionBank screens ──
+import Dashboard from "../pages/admin/questions/Dashboard";
+import Subjects from "../pages/admin/questions/Subjects";
+import Questions from "../pages/admin/questions/Questions";
+import CreatedPapers from "../pages/admin/questions/CreatedPapers";
+import ExamDetails from "../pages/admin/questions/ExamDetails";
 
 const AppRoutes = () => (
   <Routes>
-    {/* Public Routes */}
+    {/* Public (no auth) */}
     <Route element={<PublicRoute />}>
-      <Route path="/" element={<Navigate to="/choose-role" />} />
-      <Route path="/choose-role" element={<RoleSelection />} />
+      <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/admin/register" element={<Register />} />
     </Route>
 
-    {/* Admin Private Routes */}
-    <Route element={<PrivateRoute allowedRole="admin" />}>
-      <Route element={<AdminLayout />}>
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="/admin/questions" element={<QuestionBank />} />
-        <Route path="/admin/papers" element={<QuestionPaper />} />
-        <Route path="/admin/results" element={<AdminResult />} />
+    {/* Admin-only */}
+    <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+      <Route path="/admin" element={<AdminLayout />}>
+        {/* dashboard */}
+        <Route index element={<AdminDashboard />} />
+        <Route path="dashboard" element={<AdminDashboard />} />
+
+        {/* questions/* */}
+        <Route path="questions">
+          <Route index element={<Dashboard />} />
+          <Route path="subjects" element={<Subjects />} />
+          <Route path=":subjectId" element={<Questions />} />
+          <Route path="created-papers" element={<CreatedPapers />} />
+          <Route path="exam-details/:id" element={<ExamDetails />} />
+        </Route>
+
+        {/* other admin pages */}
+        <Route path="results" element={<Review />} />
       </Route>
     </Route>
 
-    {/* User Private Routes */}
-    <Route element={<PrivateRoute allowedRole="user" />}>
-      <Route element={<UserLayout />}>
-        <Route path="/user/dashboard" element={<UserDashboard />} />
-        <Route path="/user/exams" element={<Exam />} />
-        <Route path="/user/results" element={<UserResult />} />
+    {/* Student-only */}
+    <Route element={<ProtectedRoute allowedRoles={["student"]} />}>
+      <Route path="/user" element={<UserLayout />}>
+        <Route index element={<UserDashboard />} />
+        <Route path="dashboard" element={<UserDashboard />} />
+        <Route path="exams" element={<Exam />} />
+        <Route path="results" element={<Result />} />
       </Route>
     </Route>
 
-    {/* Fallback */}
-    <Route path="*" element={<Navigate to="/" />} />
+    {/* Unauthorized & catch-all */}
+    <Route path="/unauthorized" element={<Unauthorized />} />
+    <Route path="*" element={<Navigate to="/" replace />} />
   </Routes>
 );
 

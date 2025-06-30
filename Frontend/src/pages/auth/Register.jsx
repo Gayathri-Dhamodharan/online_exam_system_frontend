@@ -7,7 +7,8 @@ import axios             from 'axios';
 import { Mail, Lock, Eye, EyeOff, Users, ArrowRight } from 'lucide-react';
 
 // point axios at your backend
-axios.defaults.baseURL = 'http://localhost:5000';
+axios.defaults.baseURL =
+  "https://online-exam-system-backend-kr3u.onrender.com";
 
 const classOptions = [
   '10th Grade',

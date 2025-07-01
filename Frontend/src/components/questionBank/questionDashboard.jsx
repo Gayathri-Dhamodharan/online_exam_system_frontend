@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 import { Plus, Eye } from "lucide-react";
 
 const QuestionDashboard = ({
@@ -7,7 +7,9 @@ const QuestionDashboard = ({
   selectedSubject,
   questions,
   exams,
+  questionsData,
 }) => {
+  // const selectID = localStorage.setItem(selectedClass.);
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-teal-100 to-teal-600 p-6">
       <div className="max-w-6xl mx-auto">
@@ -16,9 +18,9 @@ const QuestionDashboard = ({
             <h1 className="text-3xl font-bold text-gray-800">
               Question Bank Dashboard
             </h1>
-            <p className="text-gray-600 mt-2">
+            {/* <p className="text-gray-600 mt-2">
              Class - {selectedClass} / {selectedSubject}
-            </p>
+            </p> */}
           </div>
           <button
             onClick={() => setCurrentStep("classSubject")}
@@ -38,8 +40,8 @@ const QuestionDashboard = ({
               </h2>
             </div>
             <p className="text-gray-600 mb-4">
-              Add new questions to your question bank for Class- {selectedClass}{" "}
-              {selectedSubject}
+              Add new questions to your question bank for Class-{" "}
+              {selectedClass?.name} {selectedSubject?.name}
             </p>
             <button
               onClick={() => setCurrentStep("createQuestion")}
@@ -48,11 +50,12 @@ const QuestionDashboard = ({
               Start Creating Questions
             </button>
             <div className="mt-4 text-sm text-gray-500">
-              Total Questions:{" "}
+              Total Questions:{questionsData?.length}
               {
                 questions.filter(
                   (q) =>
-                    q.class === selectedClass && q.subject === selectedSubject
+                    q.class === selectedClass?.name &&
+                    q.subject === selectedSubject?.name
                 ).length
               }
             </div>
@@ -67,8 +70,8 @@ const QuestionDashboard = ({
               </h2>
             </div>
             <p className="text-gray-600 mb-4">
-              View and manage created exams for Class - {selectedClass}{" "}
-              {selectedSubject}
+              View and manage created exams for Class - {selectedClass?.name}{" "}
+              {selectedSubject?.name}
             </p>
             <button
               onClick={() => setCurrentStep("viewExams")}
@@ -77,11 +80,12 @@ const QuestionDashboard = ({
               View All Exams
             </button>
             <div className="mt-4 text-sm text-gray-500">
-              Total Exams:{" "}
+              Total Exams:{""}
               {
                 exams.filter(
                   (e) =>
-                    e.class === selectedClass && e.subject === selectedSubject
+                    e.class === selectedClass?.name &&
+                    e.subject === selectedSubject?.name
                 ).length
               }
             </div>
@@ -92,4 +96,4 @@ const QuestionDashboard = ({
   );
 };
 
-export default QuestionDashboard
+export default QuestionDashboard;

@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useEffect, useState } from "react";
 import { ArrowLeft, Save } from "lucide-react";
+import { getQuestionById } from "../../service/Questions/editQuestion";
 
 const EditQuestion = ({
   selectedClass,
@@ -10,13 +11,40 @@ const EditQuestion = ({
   currentQuestion,
   setCurrentQuestion,
   handleUpdateQuestion,
+  editingQuestion,
 }) => {
+  const getQuestionByIdss = async () => {
+    try {
+      const response = await getQuestionById(editingQuestion);
+      const data = response.data;
+
+      // Safely initialize currentQuestion state
+      setCurrentQuestion({
+        questionText: data.questionText || "",
+        type: data.questionType === "multiple-choice" ? "MCQ" : "True/False",
+        options: Array.isArray(data.questionOptions)
+          ? data.questionOptions
+          : ["", "", "", ""],
+        answer: data.answer || "",
+        marks: data.marks || 1,
+      });
+    } catch (err) {
+      console.log(err, "err");
+    }
+  };
+
+  useEffect(() => {
+    getQuestionByIdss();
+  }, []);
+
+  if (!currentQuestion) return null; // Show nothing or a loader while loading
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-teal-100 to-teal-600 p-6">
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800">
-            Edit Question - {selectedClass} {selectedSubject}
+            Edit Question - {selectedClass?.name} {selectedSubject?.name}
           </h1>
           <button
             onClick={() => {
@@ -37,6 +65,7 @@ const EditQuestion = ({
           </h2>
 
           <div className="space-y-4">
+            {/* Question Type */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Question Type
@@ -47,6 +76,13 @@ const EditQuestion = ({
                   setCurrentQuestion({
                     ...currentQuestion,
                     type: e.target.value,
+                    options:
+                      e.target.value === "MCQ"
+                        ? currentQuestion.options.length
+                          ? currentQuestion.options
+                          : ["", "", "", ""]
+                        : [],
+                    answer: "",
                   })
                 }
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
@@ -56,6 +92,7 @@ const EditQuestion = ({
               </select>
             </div>
 
+            {/* Question Text */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Question Text
@@ -74,35 +111,38 @@ const EditQuestion = ({
               />
             </div>
 
-            {currentQuestion.type === "MCQ" && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Options
-                </label>
-                {currentQuestion.options.map((option, index) => (
-                  <input
-                    key={index}
-                    value={option}
-                    onChange={(e) => {
-                      const newOptions = [...currentQuestion.options];
-                      newOptions[index] = e.target.value;
-                      setCurrentQuestion({
-                        ...currentQuestion,
-                        options: newOptions,
-                      });
-                    }}
-                    className="w-full p-2 border border-gray-300 rounded-lg mb-2 focus:ring-2 focus:ring-teal-500"
-                    placeholder={`Option ${index + 1}`}
-                  />
-                ))}
-              </div>
-            )}
+            {/* Options */}
+            {currentQuestion.questionType === "MCQ" &&
+              Array.isArray(currentQuestion.options) && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Options
+                  </label>
+                  {currentQuestion.options.map((option, index) => (
+                    <input
+                      key={index}
+                      value={option}
+                      onChange={(e) => {
+                        const newOptions = [...currentQuestion.options];
+                        newOptions[index] = e.target.value;
+                        setCurrentQuestion({
+                          ...currentQuestion,
+                          options: newOptions,
+                        });
+                      }}
+                      className="w-full p-2 border border-gray-300 rounded-lg mb-2 focus:ring-2 focus:ring-teal-500"
+                      placeholder={`Option ${index + 1}`}
+                    />
+                  ))}
+                </div>
+              )}
 
+            {/* Correct Answer */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Correct Answer
               </label>
-              {currentQuestion.type === "True/False" ? (
+              {currentQuestion.questionType === "True/False" ? (
                 <select
                   value={currentQuestion.answer}
                   onChange={(e) =>
@@ -132,6 +172,7 @@ const EditQuestion = ({
               )}
             </div>
 
+            {/* Marks */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Marks
@@ -150,6 +191,7 @@ const EditQuestion = ({
               />
             </div>
 
+            {/* Update Button */}
             <button
               onClick={handleUpdateQuestion}
               className="w-full bg-teal-600 text-white py-3 px-4 rounded-lg hover:bg-teal-700 transition-colors"

@@ -196,7 +196,6 @@
 
 // export default UserLayout;
 
-
 import React, { useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import {
@@ -233,19 +232,19 @@ export default function UserLayout() {
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const [mobileOpen, setMobileOpen]       = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
 
   // pull and format user info
-  const storedName   = localStorage.getItem("name")   || "User";
+  const storedName = localStorage.getItem("name") || "User";
   const storedAvatar = localStorage.getItem("avatar") || "";
   const formattedName = storedName
     .split(" ")
-    .map(w => w[0].toUpperCase() + w.slice(1).toLowerCase())
+    .map((w) => w[0].toUpperCase() + w.slice(1).toLowerCase())
     .join(" ");
 
   const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
-  const handleLogoutClick  = () => setLogoutDialogOpen(true);
+  const handleLogoutClick = () => setLogoutDialogOpen(true);
   const handleLogoutCancel = () => setLogoutDialogOpen(false);
   const handleLogoutConfirm = () => {
     localStorage.removeItem("token");
@@ -253,25 +252,25 @@ export default function UserLayout() {
   };
 
   const menuItems = [
-    { text: "Dashboard",     icon: <DashboardIcon />,   path: "/user/dashboard" },
-    { text: "Examination",   icon: <LibraryBooksIcon />, path: "/user/exams" },
-    { text: "Result",        icon: <RateReviewIcon />,   path: "/user/results" },
-    { text: "Logout",        icon: <LogoutIcon />,       action: handleLogoutClick },
+    { text: "Dashboard", icon: <DashboardIcon />, path: "/user/dashboard" },
+    { text: "Examination", icon: <LibraryBooksIcon />, path: "/user/exams" },
+    { text: "Result", icon: <RateReviewIcon />, path: "/user/results" },
+    { text: "Logout", icon: <LogoutIcon />, action: handleLogoutClick },
   ];
 
   const drawer = (
     <div>
       <Toolbar />
       <List>
-        {menuItems.map(item => (
+        {menuItems?.map((item) => (
           <ListItem
             button
-            key={item.text}
+            key={item?.text}
             onClick={() => {
-              if (item.action) {
+              if (item?.action) {
                 item.action();
               } else {
-                navigate(item.path);
+                navigate(item?.path);
                 if (isMobile) setMobileOpen(false);
               }
             }}
@@ -323,12 +322,13 @@ export default function UserLayout() {
               sx={{
                 width: 32,
                 height: 32,
-                background: "linear-gradient(to bottom, #006a70, rgb(1, 79, 81))",
+                background:
+                  "linear-gradient(to bottom, #006a70, rgb(1, 79, 81))",
               }}
             >
               {formattedName
                 .split(" ")
-                .map(n => n[0])
+                .map((n) => n[0])
                 .join("")}
             </Avatar>
           </Box>
@@ -336,7 +336,10 @@ export default function UserLayout() {
       </AppBar>
 
       {/* Sidebar */}
-      <Box component="nav" sx={{ width: { md: drawerWidth }, flexShrink: { md: 0 } }}>
+      <Box
+        component="nav"
+        sx={{ width: { md: drawerWidth }, flexShrink: { md: 0 } }}
+      >
         <Drawer
           variant="temporary"
           open={mobileOpen}
@@ -346,7 +349,8 @@ export default function UserLayout() {
             display: { xs: "block", md: "none" },
             "& .MuiDrawer-paper": {
               width: drawerWidth,
-              background: "linear-gradient(to bottom, #006a70, rgb(44, 150, 152))",
+              background:
+                "linear-gradient(to bottom, #006a70, rgb(44, 150, 152))",
               color: "rgb(1, 79, 81)",
             },
           }}

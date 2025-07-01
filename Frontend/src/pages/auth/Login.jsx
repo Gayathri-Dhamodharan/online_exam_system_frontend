@@ -1,15 +1,13 @@
-
 import React, { useState } from "react";
-import { useFormik }       from "formik";
-import * as Yup            from "yup";
-import axios               from "axios";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import axios from "axios";
 import { Mail, Lock, Eye, EyeOff, BookOpen, ArrowRight } from "lucide-react";
-import { useNavigate }     from "react-router-dom";
-import api from "../../service/api"
+import { useNavigate } from "react-router-dom";
+import api from "../../service/api";
 
 // point axios at your backend
-axios.defaults.baseURL =
-  "https://online-exam-system-backend-kr3u.onrender.com";
+axios.defaults.baseURL = "http://localhost:5000";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -17,41 +15,41 @@ const Login = () => {
 
   const formik = useFormik({
     initialValues: {
-      email:    "",
-      password: ""
+      email: "",
+      password: "",
     },
     validationSchema: Yup.object({
-      email:    Yup.string().email("Invalid email").required("Required"),
-      password: Yup.string().min(6, "Minimum 6 characters").required("Required")
+      email: Yup.string().email("Invalid email").required("Required"),
+      password: Yup.string()
+        .min(6, "Minimum 6 characters")
+        .required("Required"),
     }),
     onSubmit: async (values, { setSubmitting, setErrors }) => {
-  try {
-    const res = await axios.post("/api/user/login", values);
-    const { token, user } = res.data;
+      try {
+        const res = await axios.post("/api/user/login", values);
+        const { token, user } = res.data;
 
-    localStorage.setItem("token", token);
-    localStorage.setItem("role", user.role);
-    localStorage.setItem("id",user._id)
-    localStorage.setItem("name",user.firstName)
-    localStorage.setItem("lastname",user.lastname)
+        localStorage.setItem("token", token);
+        localStorage.setItem("role", user.role);
+        localStorage.setItem("userId", user._id);
+        localStorage.setItem("name", user.firstName);
+        localStorage.setItem("lastname", user.lastname);
 
-    console.log("User ID:",  localStorage.getItem("id"));
-   console.log("User Name:",localStorage.getItem("name")); 
-    
+        console.log("User ID:", localStorage.getItem("id"));
+        console.log("User Name:", localStorage.getItem("name"));
 
-    if (user.role === "admin") {
-      navigate("/admin/dashboard");
-    } else {
-      navigate("/user/dashboard");
-    }
-  } catch (err) {
-    const msg = err.response?.data?.message || "Login failed";
-    setErrors({ email: msg });
-  } finally {
-    setSubmitting(false);
-  }
-}
-
+        if (user.role === "admin") {
+          navigate("/admin/dashboard");
+        } else {
+          navigate("/user/dashboard");
+        }
+      } catch (err) {
+        const msg = err.response?.data?.message || "Login failed";
+        setErrors({ email: msg });
+      } finally {
+        setSubmitting(false);
+      }
+    },
   });
 
   return (
@@ -83,13 +81,17 @@ const Login = () => {
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               </div>
               {formik.touched.email && formik.errors.email && (
-                <p className="text-xs text-red-500 mt-1">{formik.errors.email}</p>
+                <p className="text-xs text-red-500 mt-1">
+                  {formik.errors.email}
+                </p>
               )}
             </div>
 
             {/* Password */}
             <div>
-              <label className="block text-sm text-gray-700 mb-1">Password</label>
+              <label className="block text-sm text-gray-700 mb-1">
+                Password
+              </label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -103,7 +105,7 @@ const Login = () => {
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <button
                   type="button"
-                  onClick={() => setShowPassword(v => !v)}
+                  onClick={() => setShowPassword((v) => !v)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
                 >
                   {showPassword ? (
@@ -114,7 +116,9 @@ const Login = () => {
                 </button>
               </div>
               {formik.touched.password && formik.errors.password && (
-                <p className="text-xs text-red-500 mt-1">{formik.errors.password}</p>
+                <p className="text-xs text-red-500 mt-1">
+                  {formik.errors.password}
+                </p>
               )}
             </div>
 

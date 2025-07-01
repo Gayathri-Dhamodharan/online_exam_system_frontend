@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Plus,
   Edit,
@@ -8,6 +8,7 @@ import {
   FileText,
   Eye,
 } from "lucide-react";
+import { getExamApi } from "../../service/Exams/examService";
 
 const ViewExams = ({
   selectedClass,
@@ -18,14 +19,32 @@ const ViewExams = ({
   handleEditExam,
   handleDeleteExam,
   getDifficultyColor,
-  handleViewExamDetails,
 }) => {
+  console.log(selectedClass, "selectedClass>>>");
+  console.log(selectedSubject, "selectedSubject>>>");
+
+  const handleViewExamDetails = async () => {
+    try {
+      let subjectId = selectedSubject._id;
+      let classId = selectedClass._id;
+      const response = await getExamApi(classId, subjectId);
+      console.log(response, " response frm exam");
+    } catch (error) {
+      console.log(error, "err");
+    }
+  };
+
+  useEffect(() => {
+    handleViewExamDetails();
+    console.log("initallty>>");
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-teal-100 to-teal-600 p-6">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800">
-            View Exams - {selectedClass} {selectedSubject}
+            View Exams - {selectedClass?.name} {selectedSubject?.name}
           </h1>
           <div className="space-x-4">
             <button
@@ -107,12 +126,9 @@ const ViewExams = ({
                 carefully before answering
               </div>
 
-              <button
-                onClick={() => handleViewExamDetails(exam)}
-                className="mt-4 w-full bg-teal-600 text-white py-2 px-4 rounded-lg hover:bg-teal-700 transition-colors"
-              >
+              <button className="mt-4 w-full bg-teal-600 text-white py-2 px-4 rounded-lg hover:bg-teal-700 transition-colors">
                 <Eye className="w-4 h-4 inline mr-2" />
-                View Exam
+                Vewi Exam
               </button>
             </div>
           ))}
@@ -120,7 +136,8 @@ const ViewExams = ({
           {classSubjectExams.length === 0 && (
             <div className="col-span-2 text-center py-12">
               <p className="text-gray-500 text-lg">
-                No exams created yet for {selectedClass} {selectedSubject}
+                No exams created yet for {selectedClass?.name}{" "}
+                {selectedSubject?.name}
               </p>
               <button
                 onClick={() => setCurrentStep("createQuestion")}

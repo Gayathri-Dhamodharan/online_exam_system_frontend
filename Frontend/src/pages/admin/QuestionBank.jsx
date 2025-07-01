@@ -1,6 +1,4 @@
-
-
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Clock,
   Calendar,
@@ -22,24 +20,31 @@ import CreateExam from "../../components/questionBank/createExam";
 import EditExam from "../../components/questionBank/editExam";
 import ViewExams from "../../components/questionBank/viewExams";
 import ViewExamDetails from "../../components/questionBank/viewExamDetails";
-
+import { addQuestion } from "../../service/Questions/addQuestions";
+import {
+  deleteQuestionById,
+  updateQuestion,
+} from "../../service/Questions/editQuestion";
+import { getQuestions } from "../../service/Questions/getQuestions";
+import { addExamApi } from "../../service/Exams/examService";
 
 const QuestionBank = () => {
   const [currentStep, setCurrentStep] = useState("classSubject"); // classSubject, dashboard, createQuestion, createExam, viewExams, viewExamDetails, editQuestion, editExam
-  const [selectedClass, setSelectedClass] = useState(   );
-  const [selectedSubject, setSelectedSubject] = useState("");
+  const [selectedClass, setSelectedClass] = useState();
+  const [selectedSubject, setSelectedSubject] = useState();
   const [questions, setQuestions] = useState([]);
   const [exams, setExams] = useState([]);
   const [selectedExam, setSelectedExam] = useState(null);
   const [editingQuestion, setEditingQuestion] = useState(null);
   const [editingExam, setEditingExam] = useState(null);
   const [currentQuestion, setCurrentQuestion] = useState({
-    type: "MCQ",
+    questionType: "multiple-choice",
     questionText: "",
     options: ["", "", "", ""],
     answer: "",
     marks: 1,
   });
+  const [questionsData, setQuestionsData] = useState([]);
   const [currentExam, setCurrentExam] = useState({
     title: "",
     date: "",
@@ -48,7 +53,12 @@ const QuestionBank = () => {
     selectedQuestions: [],
   });
 
-  const handleUpdateQuestion = () => {
+  console.log(
+    editingQuestion,
+    " editingQuestioneditingQuestioneditingQuestion"
+  );
+
+  const handleUpdateQuestion = async () => {
     if (currentQuestion.questionText && currentQuestion.answer) {
       setQuestions(
         questions.map((q) =>
@@ -57,26 +67,65 @@ const QuestionBank = () => {
             : q
         )
       );
-      setEditingQuestion(null);
-      resetCurrentQuestion();
-      setCurrentStep("createQuestion");
-    }
-  };
 
-  const handleDeleteQuestion = (questionId) => {
-    if (window.confirm("Are you sure you want to delete this question?")) {
-      setQuestions(questions.filter((q) => q.id !== questionId));
-      // Also remove from any exams
-      setExams(
-        exams.map((exam) => ({
-          ...exam,
-          selectedQuestions: exam.selectedQuestions.filter(
-            (qId) => qId !== questionId
-          ),
-        }))
-      );
+      try {
+        const response = await updateQuestion(editingQuestion, currentQuestion);
+        console.log("response for update ", response);
+
+        if (response?.status == "200") {
+          alert("updated successfully ");
+          setEditingQuestion(null);
+          resetCurrentQuestion();
+          getAllQuestions();
+          setCurrentStep("createQuestion");
+        }
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
+  const getAllQuestions = async () => {
+    try {
+      const response = await getQuestions();
+      setQuestionsData(response?.data);
+      console.log(response, "response888888");
+    } catch (err) {
+      alert("something went wrong");
+      console.log(err, "err");
+    }
+  };
+  const handleDeleteQuestion = async (questionId) => {
+    try {
+      const deletedData = await deleteQuestionById(questionId);
+      console.log(deletedData, "deletedData");
+
+      if (deletedData?.status == "200") {
+        getAllQuestions();
+        setEditingQuestion(null);
+        resetCurrentQuestion();
+
+        setCurrentStep("createQuestion");
+      }
+    } catch (error) {
+      console.log(error, "deletedData-error");
+    }
+    // if (window.confirm("Are you sure you want to delete this question?")) {
+    //   setQuestions(questions.filter((q) => q.id !== questionId));
+    //   // Also remove from any exams
+    //   setExams(
+    //     exams.map((exam) => ({
+    //       ...exam,
+    //       selectedQuestions: exam.selectedQuestions.filter(
+    //         (qId) => qId !== questionId
+    //       ),
+    //     }))
+    //   );
+    // }
+  };
+  useEffect(() => {
+    getAllQuestions();
+    console.log("initial call");
+  }, []);
   const handleEditQuestion = (question) => {
     setEditingQuestion(question);
     setCurrentQuestion({ ...question });
@@ -85,7 +134,7 @@ const QuestionBank = () => {
 
   const resetCurrentQuestion = () => {
     setCurrentQuestion({
-      type: "MCQ",
+      questionType: "multiple-choice",
       questionText: "",
       options: ["", "", "", ""],
       answer: "",
@@ -93,7 +142,7 @@ const QuestionBank = () => {
     });
   };
 
-  const handleCreateExam = () => {
+  const handleCreateExam = async () => {
     if (
       currentExam.title &&
       currentExam.date &&
@@ -112,7 +161,15 @@ const QuestionBank = () => {
           return sum + (question?.marks || 0);
         }, 0),
       };
-      setExams([...exams, newExam]);
+      // console.log(newExam, "uhuhikhnikh");
+      try {
+        const response = await addExamApi(newExam);
+
+        console.log(response, " response frm exam");
+      } catch (err) {
+        console.log(err, "err");
+      }
+      // setExams([...exams, newExam]);
       resetCurrentExam();
       setCurrentStep("dashboard");
     }
@@ -172,7 +229,13 @@ const QuestionBank = () => {
     }
   };
 
-  const handleViewExamDetails = (exam) => {
+  const handleViewExamDetails = async (exam) => {
+    try {
+      const response = await getExamApi(newExam);
+      console.log(response, " response frm exam");
+    } catch (error) {
+      console.log(err, "err");
+    }
     setSelectedExam(exam);
     setCurrentStep("viewExamDetails");
   };
@@ -218,30 +281,29 @@ const QuestionBank = () => {
 
   // Class and Subject Selection
   if (currentStep === "classSubject") {
-    
     return (
-    <div>
-      <ClassSubject
-        selectedClass={selectedClass}
-        selectedSubject={selectedSubject}
-        setSelectedSubject={setSelectedSubject}
-        setSelectedClass={setSelectedClass}
-        setCurrentStep={setCurrentStep}
-      />
-    </div>
-  );
+      <div>
+        <ClassSubject
+          selectedClass={selectedClass}
+          selectedSubject={selectedSubject}
+          setSelectedSubject={setSelectedSubject}
+          setSelectedClass={setSelectedClass}
+          setCurrentStep={setCurrentStep}
+        />
+      </div>
+    );
   }
 
   // Dashboard
   if (currentStep === "dashboard") {
     return (
-
       <QuestionDashboard
         selectedClass={selectedClass}
         selectedSubject={selectedSubject}
         setCurrentStep={setCurrentStep}
         questions={questions}
         exams={exams}
+        questionsData={questionsData}
       />
     );
   }
@@ -254,18 +316,19 @@ const QuestionBank = () => {
 
     return (
       <CreateQuestion
-      questions={questions}
-selectedClass={selectedClass}
-selectedSubject={selectedSubject}
-setCurrentStep={setCurrentStep}
-setCurrentQuestion={setCurrentQuestion}
-currentQuestion={currentQuestion}
-classSubjectQuestions={classSubjectQuestions}
-setQuestions={setQuestions}
-resetCurrentQuestion={resetCurrentQuestion}
-handleDeleteQuestion={handleDeleteQuestion}
-handleEditQuestion={handleEditQuestion}
-
+        questions={questions}
+        selectedClass={selectedClass}
+        selectedSubject={selectedSubject}
+        setCurrentStep={setCurrentStep}
+        setCurrentQuestion={setCurrentQuestion}
+        currentQuestion={currentQuestion}
+        classSubjectQuestions={classSubjectQuestions}
+        setQuestions={setQuestions}
+        resetCurrentQuestion={resetCurrentQuestion}
+        handleDeleteQuestion={handleDeleteQuestion}
+        handleEditQuestion={handleEditQuestion}
+        questionsData={questionsData}
+        getAllQuestions={getAllQuestions}
       />
     );
   }
@@ -277,6 +340,7 @@ handleEditQuestion={handleEditQuestion}
         selectedClass={selectedClass}
         selectedSubject={selectedSubject}
         setEditingQuestion={setEditingQuestion}
+        editingQuestion={editingQuestion}
         resetCurrentQuestion={resetCurrentQuestion}
         setCurrentStep={setCurrentStep}
         currentQuestion={currentQuestion}
@@ -301,6 +365,8 @@ handleEditQuestion={handleEditQuestion}
         setCurrentExam={setCurrentExam}
         classSubjectQuestions={classSubjectQuestions}
         handleCreateExam={handleCreateExam}
+        getAllQuestions={getAllQuestions}
+        questionsData={questionsData}
       />
     );
   }
@@ -312,7 +378,6 @@ handleEditQuestion={handleEditQuestion}
     );
 
     return (
-     
       <EditExam
         classSubjectQuestions={classSubjectQuestions}
         selectedClass={selectedClass}
@@ -361,7 +426,6 @@ handleEditQuestion={handleEditQuestion}
     );
 
     return (
-
       <ViewExamDetails
         selectedExam={selectedExam}
         selectedClass={selectedClass}

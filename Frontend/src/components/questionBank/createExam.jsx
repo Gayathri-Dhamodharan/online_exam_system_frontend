@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 const CreateExam = ({
   selectedClass,
@@ -8,13 +8,17 @@ const CreateExam = ({
   setCurrentExam,
   classSubjectQuestions,
   handleCreateExam,
+  getAllQuestions,
+  questionsData ,
 }) => {
+  console.log(questionsData, "questionsData");
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-teal-100 to-teal-600 p-6">
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800">
-            Create Exam - {selectedClass} {selectedSubject}
+            Create Exam - {selectedClass?.name} {selectedSubject?.name}
           </h1>
           <button
             onClick={() => setCurrentStep("createQuestion")}
@@ -89,15 +93,15 @@ const CreateExam = ({
               Select Questions
             </label>
             <div className="border border-gray-300 rounded-lg p-4 max-h-60 overflow-y-auto">
-              {classSubjectQuestions.map((question, index) => (
+              {questionsData.map((question, index) => (
                 <div
-                  key={question.id}
+                  key={question._id}
                   className="flex items-center space-x-3 mb-3"
                 >
                   <input
                     type="checkbox"
                     checked={currentExam.selectedQuestions.includes(
-                      question.id
+                      question._id
                     )}
                     onChange={(e) => {
                       if (e.target.checked) {
@@ -105,7 +109,7 @@ const CreateExam = ({
                           ...currentExam,
                           selectedQuestions: [
                             ...currentExam.selectedQuestions,
-                            question.id,
+                            question._id,
                           ],
                         });
                       } else {
@@ -113,7 +117,7 @@ const CreateExam = ({
                           ...currentExam,
                           selectedQuestions:
                             currentExam.selectedQuestions.filter(
-                              (id) => id !== question.id
+                              (id) => id !== question._id
                             ),
                         });
                       }
@@ -158,4 +162,4 @@ const CreateExam = ({
   );
 };
 
-export default CreateExam
+export default CreateExam;

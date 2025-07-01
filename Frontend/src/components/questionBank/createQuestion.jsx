@@ -1,7 +1,9 @@
-import React from 'react'
-import {Edit,Trash2} from 'lucide-react'
-import { useEffect } from 'react';
-import api from '../../service/api';
+import React, { useState } from "react";
+import { Edit, Trash2 } from "lucide-react";
+import { useEffect } from "react";
+import api from "../../service/api";
+import { addQuestion } from "../../service/Questions/addQuestions";
+import { getQuestions } from "../../service/Questions/getQuestions";
 
 const CreateQuestion = ({
   questions,
@@ -15,43 +17,57 @@ const CreateQuestion = ({
   handleEditQuestion,
   handleDeleteQuestion,
   resetCurrentQuestion,
+  questionsData,
+  getAllQuestions,
 }) => {
-//  const id =localStorage.getItem("id");
+  //  const id =localStorage.getItem("id");
 
-useEffect(() => {
-  (async () => {
-    try {
-      const { data } = await api.post("/api/questions");
-      console.log("data",data);
-      setCurrentQuestion(data);
-      // setClasses(data);
-    } catch (e) {
-      console.error(e);
-    }
-  })();
-}, []);
-
-
-const handleCreateQuestion = () => {
+  console.log(
+    classSubjectQuestions,
+    "curnewQuestionrentQuestioncnewQuestionurrentQuestion"
+  );
+  const role = localStorage.getItem("role");
+  const userId = localStorage.getItem("userId");
+  console.log(selectedClass, "selectedClass");
+  console.log(selectedSubject, "selectedSubject");
+  const handleCreateQuestion = async () => {
     if (currentQuestion.questionText && currentQuestion.answer) {
+      const { type, ...rest } = currentQuestion;
       const newQuestion = {
-        ...currentQuestion,
+        ...rest,
+        questionType: type,
         id: Date.now(),
-        class: selectedClass,
-        subject: selectedSubject,
+        class: { id: selectedClass?._id, name: selectedClass?.name },
+        subject: { id: selectedSubject?._id, name: selectedSubject?.name },
+        userId: {
+          role: role,
+          id: userId,
+        },
       };
-      setQuestions([...questions, newQuestion]);
-      resetCurrentQuestion();
+      try {
+        const response = await addQuestion(newQuestion);
+        console.log(response, "ress");
+        if (response?.status == 201) {
+          alert("Question created successfully");
+          resetCurrentQuestion();
+          getAllQuestions();
+        }
+      } catch (err) {
+        alert("Something went wrong");
+        console.log(err, "err");
+      }
+    } else {
+      alert("Please fill the required fields");
     }
-  };
-  
+  }; // <-- THIS closing brace was missing
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-teal-100 to-teal-600 p-6">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800">
-            Create Questions - Class- {selectedClass}/ {selectedSubject}
+            Create Questions - Class- {selectedClass?.name}/{" "}
+            {selectedSubject?.name}
           </h1>
           <div className="space-x-4">
             <button
@@ -202,31 +218,31 @@ const handleCreateQuestion = () => {
           {/* Questions List */}
           <div className="bg-white rounded-xl shadow-lg p-6">
             <h2 className="text-xl font-semibold text-gray-800 mb-6">
-              Created Questions ({classSubjectQuestions.length})
+              Created Questions ({questionsData?.length})
             </h2>
 
             <div className="space-y-4 max-h-96 overflow-y-auto">
-              {classSubjectQuestions.map((question, index) => (
+              {questionsData?.map((question, index) => (
                 <div
-                  key={question.id}
+                  key={question._id}
                   className="border border-gray-200 rounded-lg p-4"
                 >
                   <div className="flex justify-between items-start mb-2">
                     <span className="text-sm font-medium text-gray-600">
-                      Q{index + 1} - {question.type}
+                      Q{index + 1} - {question.questionType}
                     </span>
                     <div className="flex items-center space-x-2">
                       <span className="text-sm text-teal-600 font-medium">
                         {question.marks} marks
                       </span>
                       <button
-                        onClick={() => handleEditQuestion(question)}
+                        onClick={() => handleEditQuestion(question?._id)}
                         className="text-blue-500 hover:text-blue-700 transition-colors"
                       >
                         <Edit className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={() => handleDeleteQuestion(question.id)}
+                        onClick={() => handleDeleteQuestion(question._id)}
                         className="text-red-500 hover:text-red-700 transition-colors"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -250,10 +266,9 @@ const handleCreateQuestion = () => {
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );
 };
-
-export default CreateQuestion
+  
+export default CreateQuestion;

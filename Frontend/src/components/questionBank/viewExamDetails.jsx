@@ -1,5 +1,5 @@
-import React from 'react'
-import { Calendar, Clock, FileText, ArrowLeft, X,Plus } from "lucide-react";
+import React from "react";
+import { Calendar, Clock, FileText, ArrowLeft, X, Plus } from "lucide-react";
 
 const ViewExamDetails = ({
   selectedExam,
@@ -20,7 +20,7 @@ const ViewExamDetails = ({
               {selectedExam.title}
             </h1>
             <p className="text-gray-600 mt-2">
-              {selectedClass} - {selectedSubject}
+              {selectedClass?.name} - {selectedSubject?.name}
             </p>
             <div className="flex items-center space-x-4 mt-2 text-sm text-gray-600">
               <span>
@@ -156,4 +156,4 @@ const ViewExamDetails = ({
   );
 };
 
-export default ViewExamDetails
+export default ViewExamDetails;

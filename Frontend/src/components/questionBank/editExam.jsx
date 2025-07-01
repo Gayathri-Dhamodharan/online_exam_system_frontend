@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 import { Save, ArrowLeft } from "lucide-react";
 
 const EditExam = ({
@@ -17,7 +17,7 @@ const EditExam = ({
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800">
-            Edit Exam - {selectedClass} {selectedSubject}
+            Edit Exam - {selectedClass?.name} {selectedSubject?.name}
           </h1>
           <button
             onClick={() => {
@@ -167,4 +167,4 @@ const EditExam = ({
   );
 };
 
-export default EditExam
+export default EditExam;

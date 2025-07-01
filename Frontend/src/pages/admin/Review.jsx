@@ -25,7 +25,7 @@ const Review = () => {
   const [selectedExam, setSelectedExam] = useState('');
   const [viewMode, setViewMode] = useState('all');
   const [selectedStudent, setSelectedStudent] = useState('');
-  const [selectSubject,setSelectSubject] = useState('')
+  const [selectSubject,setSelectSubject] = useState('');
 
   // Get unique values
   const uniqueClasses = [...new Set(studentsData.map(item => item.class))].sort();

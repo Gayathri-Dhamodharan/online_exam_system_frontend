@@ -112,7 +112,7 @@ export default function AdminLayout() {
             </IconButton>
           )}
           <Typography variant="h6" noWrap>
-            Admin Portal
+              Admin Portal
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: "flex", alignItems: "center" }}>

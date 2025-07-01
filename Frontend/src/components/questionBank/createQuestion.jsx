@@ -1,5 +1,7 @@
 import React from 'react'
 import {Edit,Trash2} from 'lucide-react'
+import { useEffect } from 'react';
+import api from '../../service/api';
 
 const CreateQuestion = ({
   questions,
@@ -14,7 +16,23 @@ const CreateQuestion = ({
   handleDeleteQuestion,
   resetCurrentQuestion,
 }) => {
-  const handleCreateQuestion = () => {
+//  const id =localStorage.getItem("id");
+
+useEffect(() => {
+  (async () => {
+    try {
+      const { data } = await api.post("/api/questions");
+      console.log("data",data);
+      setCurrentQuestion(data);
+      // setClasses(data);
+    } catch (e) {
+      console.error(e);
+    }
+  })();
+}, []);
+
+
+const handleCreateQuestion = () => {
     if (currentQuestion.questionText && currentQuestion.answer) {
       const newQuestion = {
         ...currentQuestion,
@@ -26,13 +44,14 @@ const CreateQuestion = ({
       resetCurrentQuestion();
     }
   };
+  
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-teal-100 to-teal-600 p-6">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800">
-            Create Questions - {selectedClass} {selectedSubject}
+            Create Questions - Class- {selectedClass}/ {selectedSubject}
           </h1>
           <div className="space-x-4">
             <button
@@ -231,6 +250,7 @@ const CreateQuestion = ({
             </div>
           </div>
         </div>
+
       </div>
     </div>
   );

@@ -17,7 +17,7 @@ const QuestionDashboard = ({
               Question Bank Dashboard
             </h1>
             <p className="text-gray-600 mt-2">
-              {selectedClass} - {selectedSubject}
+             Class - {selectedClass} / {selectedSubject}
             </p>
           </div>
           <button
@@ -38,7 +38,7 @@ const QuestionDashboard = ({
               </h2>
             </div>
             <p className="text-gray-600 mb-4">
-              Add new questions to your question bank for {selectedClass}{" "}
+              Add new questions to your question bank for Class- {selectedClass}{" "}
               {selectedSubject}
             </p>
             <button
@@ -63,11 +63,11 @@ const QuestionDashboard = ({
             <div className="flex items-center mb-4">
               <Eye className="w-8 h-8 text-teal-600 mr-3" />
               <h2 className="text-xl font-semibold text-gray-800">
-                View Exams
+                View Question Paper
               </h2>
             </div>
             <p className="text-gray-600 mb-4">
-              View and manage created exams for {selectedClass}{" "}
+              View and manage created exams for Class - {selectedClass}{" "}
               {selectedSubject}
             </p>
             <button

@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import api from '../../service/api';
 
 const ClassSubject = ({
   selectedClass,
@@ -6,29 +7,47 @@ const ClassSubject = ({
   setSelectedSubject,
   setSelectedClass,
   setCurrentStep,
-}) => {
-const classes = [
-  "Class 6",
-  "Class 7",
-  "Class 8",
-  "Class 9",
-  "Class 10",
-  "Class 11",
-  "Class 12",
-];
-const subjects = [
-  "Mathematics",
-  "English",
-  "Science",
-  "Physics",
-  "Chemistry",
-  "Biology",
-  "Tamil",
-  "Social Science",
-];
+}) =>{
+
+    const [classes, setClasses] = useState([]);
+    const [subjects, setSubjects] =useState([])
+useEffect(() => {
+  (async () => {
+    try {
+      const { data } = await api.get("/api/class");
+      // console.log("data",data)
+      setClasses(data)
+    } catch (e) {
+      console.error(e);
+    }
+  })();
+}, []);
+
+useEffect(() => {
+  (async () => {
+    try {
+      const { data } = await api.get("/api/subjects");
+      // console.log("data",data)
+      setSubjects(data)
+    } catch (e) {
+      console.error(e);
+    }
+  })();
+}, []);
+
+// const subjects = [
+//   "Mathematics",
+//   "English",
+//   "Science",
+//   "Physics",
+//   "Chemistry",
+//   "Biology",
+//   "Tamil",
+//   "Social Science",
+// ];
 
   const handleClassSubjectSelect = () => {
-    if (selectedClass && selectedClass) {
+    if (selectedClass && selectedSubject) {
       setCurrentStep("dashboard");
     }
 
@@ -57,9 +76,9 @@ const subjects = [
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                 >
                   <option value="">Choose a class</option>
-                  {classes.map((cls) => (
-                    <option key={cls} value={cls}>
-                      {cls}
+                  {classes?.map((cls) => (
+                    <option key={cls._id} value={cls.name}>
+                      {cls.name}
                     </option>
                   ))}
                 </select>
@@ -76,8 +95,8 @@ const subjects = [
                 >
                   <option value="">Choose a subject</option>
                   {subjects.map((subject) => (
-                    <option key={subject} value={subject}>
-                      {subject}
+                    <option key={subject._id} value={subject.name}>
+                      {subject.name}
                     </option>
                   ))}
                 </select>

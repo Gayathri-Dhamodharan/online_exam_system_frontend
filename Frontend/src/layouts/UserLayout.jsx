@@ -294,7 +294,7 @@ export default function UserLayout() {
         position="fixed"
         sx={{
           zIndex: theme.zIndex.drawer + 1,
-          background: "linear-gradient(to bottom, #ffffff)",
+          background:"linear-gradient(to bottom, #006a70, rgb(1, 79, 81))",
         }}
       >
         <Toolbar>
@@ -323,7 +323,7 @@ export default function UserLayout() {
                 width: 32,
                 height: 32,
                 background:
-                  "linear-gradient(to bottom, #006a70, rgb(1, 79, 81))",
+                  "linear-gradient(to bottom, #006a60)",
               }}
             >
               {formattedName

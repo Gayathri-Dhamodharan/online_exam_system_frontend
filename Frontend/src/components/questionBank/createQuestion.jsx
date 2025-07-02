@@ -6,14 +6,14 @@ import { addQuestion } from "../../service/Questions/addQuestions";
 import { getQuestions } from "../../service/Questions/getQuestions";
 
 const CreateQuestion = ({
-  questions,
+  // questions,
   selectedClass,
   selectedSubject,
   setCurrentStep,
   setCurrentQuestion,
   currentQuestion,
   classSubjectQuestions,
-  setQuestions,
+  // setQuestions,
   handleEditQuestion,
   handleDeleteQuestion,
   resetCurrentQuestion,
@@ -22,14 +22,10 @@ const CreateQuestion = ({
 }) => {
   //  const id =localStorage.getItem("id");
 
-  console.log(
-    classSubjectQuestions,
-    "curnewQuestionrentQuestioncnewQuestionurrentQuestion"
-  );
   const role = localStorage.getItem("role");
   const userId = localStorage.getItem("userId");
-  console.log(selectedClass, "selectedClass");
-  console.log(selectedSubject, "selectedSubject");
+  // console.log(selectedClass, "selectedClass");
+  // console.log(selectedSubject, "selectedSubject");
   const handleCreateQuestion = async () => {
     if (currentQuestion.questionText && currentQuestion.answer) {
       const { type, ...rest } = currentQuestion;
@@ -130,7 +126,7 @@ const CreateQuestion = ({
                 />
               </div>
 
-              {currentQuestion.type === "MCQ" && (
+              {currentQuestion.type === "multiple-choice" && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Options

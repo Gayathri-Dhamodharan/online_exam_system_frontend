@@ -1,7 +1,26 @@
 import React from 'react'
 import {Clock, Calendar, Timer, Award, } from 'lucide-react'
+import api from '../../service/api';
 
 const ExamList = ({exams, getDifficultyColor, getDaysLeftColor, startExam }) => {
+
+  const className = localStorage.getItem("class");
+
+// useEffect(async() => {
+//   try {}
+//     const response = await api.get(`/api/exams/${className}`);
+//     console.log(response.data, "response data from exam list")
+//   } catch (error) {
+//      console.error("Error fetching exams:",error);    
+//   }
+
+//   return () => {
+    
+//   }
+// }, [third])
+
+
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4">
         <div className="max-w-7xl mx-auto">

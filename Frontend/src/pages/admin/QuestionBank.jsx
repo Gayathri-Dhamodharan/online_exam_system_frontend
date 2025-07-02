@@ -32,9 +32,11 @@ const QuestionBank = () => {
   const [currentStep, setCurrentStep] = useState("classSubject"); // classSubject, dashboard, createQuestion, createExam, viewExams, viewExamDetails, editQuestion, editExam
   const [selectedClass, setSelectedClass] = useState();
   const [selectedSubject, setSelectedSubject] = useState();
+  const [classSubjectExams, setClassSubjectExams] = useState([]);
+
   const [questions, setQuestions] = useState([]);
   const [exams, setExams] = useState([]);
-  const [selectedExam, setSelectedExam] = useState(null);
+  const [selectedExam, setSelectedExam] = useState();
   const [editingQuestion, setEditingQuestion] = useState(null);
   const [editingExam, setEditingExam] = useState(null);
   const [currentQuestion, setCurrentQuestion] = useState({
@@ -174,6 +176,8 @@ const QuestionBank = () => {
       setCurrentStep("dashboard");
     }
   };
+
+  // <<<<<<----------------->>>>>>
 
   const handleEditExam = (exam) => {
     setEditingExam(exam);
@@ -394,16 +398,15 @@ const QuestionBank = () => {
 
   // View Exams
   if (currentStep === "viewExams") {
-    const classSubjectExams = exams.filter(
-      (e) => e.class === selectedClass && e.subject === selectedSubject
-    );
-
     return (
       <ViewExams
+        setSelectedExam={setSelectedExam}
+        selectedExam={selectedExam}
         selectedClass={selectedClass}
         selectedSubject={selectedSubject}
         setCurrentStep={setCurrentStep}
         classSubjectExams={classSubjectExams}
+        setClassSubjectExams={setClassSubjectExams}
         getDifficultyText={getDifficultyText}
         handleEditExam={handleEditExam}
         handleDeleteExam={handleDeleteExam}
@@ -414,23 +417,32 @@ const QuestionBank = () => {
   }
 
   // View Exam Details
-  if (currentStep === "viewExamDetails" && selectedExam) {
-    const examQuestions = questions.filter((q) =>
-      selectedExam.selectedQuestions.includes(q.id)
-    );
-    const availableQuestions = questions.filter(
-      (q) =>
-        q.class === selectedClass &&
-        q.subject === selectedSubject &&
-        !selectedExam.selectedQuestions.includes(q.id)
-    );
+  // if (currentStep === "viewExamDetails" && selectedExam) {
+  //   const examQuestions = questions.filter((q) =>
+  //     selectedExam.selectedQuestions.includes(q.id)
+  //   );
+  //   const availableQuestions = questions.filter(
+  //     (q) =>
+  //       q.class === selectedClass &&
+  //       q.subject === selectedSubject &&
+  //       !selectedExam.selectedQuestions.includes(q.id)
+  //   );
 
+  if (currentStep === "viewExamDetails" && selectedExam) {
+    // Don't filter questions here since we'll handle it in ViewExamDetails
+    // after fetching the complete exam data
+    const availableQuestions = questions.filter(
+      (q) => q.class === selectedClass && q.subject === selectedSubject
+    );
     return (
       <ViewExamDetails
         selectedExam={selectedExam}
+        setSelectedExam={setSelectedExam}
         selectedClass={selectedClass}
         selectedSubject={selectedSubject}
-        examQuestions={examQuestions}
+        // examQuestions={examQuestions}
+        setClassSubjectExams={setClassSubjectExams}
+        classSubjectExams={classSubjectExams}
         handleRemoveQuestionFromExam={handleRemoveQuestionFromExam}
         handleAddQuestionToExam={handleAddQuestionToExam}
         availableQuestions={availableQuestions}

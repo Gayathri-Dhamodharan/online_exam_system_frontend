@@ -6,14 +6,14 @@ import { addQuestion } from "../../service/Questions/addQuestions";
 import { getQuestions } from "../../service/Questions/getQuestions";
 
 const CreateQuestion = ({
-  // questions,
+  questions,
   selectedClass,
   selectedSubject,
   setCurrentStep,
   setCurrentQuestion,
   currentQuestion,
   classSubjectQuestions,
-  // setQuestions,
+  setQuestions,
   handleEditQuestion,
   handleDeleteQuestion,
   resetCurrentQuestion,
@@ -22,10 +22,14 @@ const CreateQuestion = ({
 }) => {
   //  const id =localStorage.getItem("id");
 
+  console.log(
+    classSubjectQuestions,
+    "curnewQuestionrentQuestioncnewQuestionurrentQuestion"
+  );
   const role = localStorage.getItem("role");
   const userId = localStorage.getItem("userId");
-  // console.log(selectedClass, "selectedClass");
-  // console.log(selectedSubject, "selectedSubject");
+  console.log(selectedClass, "selectedClass");
+  console.log(selectedSubject, "selectedSubject");
   const handleCreateQuestion = async () => {
     if (currentQuestion.questionText && currentQuestion.answer) {
       const { type, ...rest } = currentQuestion;
@@ -103,7 +107,7 @@ const CreateQuestion = ({
                   }
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
                 >
-                  <option value="MCQ">Multiple Choice (MCQ)</option>
+                  <option value="mcq">Multiple Choice (MCQ)</option>
                   <option value="True/False">True or False</option>
                 </select>
               </div>
@@ -126,7 +130,7 @@ const CreateQuestion = ({
                 />
               </div>
 
-              {currentQuestion.type === "multiple-choice" && (
+              {currentQuestion.type === "mcq" && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Options

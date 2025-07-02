@@ -16,3 +16,8 @@ export const getSingleExam = async (examId) => {
   const result = await api.get(`/api/exam/get-singleExam/${examId}`);
   return result;
 };
+export const getAllUpcomingExamAPI = async (classID) => {
+  console.log(classID, "examIdexamIdexamIdexamId");
+  const result = await api.get(`/api/exam/class/${classID}`);
+  return result;
+};

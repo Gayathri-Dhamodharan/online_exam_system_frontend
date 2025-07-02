@@ -8,7 +8,7 @@ const CreateExam = ({
   setCurrentExam,
   classSubjectQuestions,
   handleCreateExam,
-  // getAllQuestions,
+  getAllQuestions,
   questionsData ,
 }) => {
   console.log(questionsData, "questionsData");

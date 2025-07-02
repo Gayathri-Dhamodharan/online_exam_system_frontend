@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useDebugValue, useEffect, useState } from "react";
 import {
   Plus,
   Edit,
@@ -12,27 +12,46 @@ import { getExamApi } from "../../service/Exams/examService";
 
 const ViewExams = ({
   selectedClass,
+  selectedExam,
   selectedSubject,
   setCurrentStep,
+  setSelectedExam,
   classSubjectExams,
   getDifficultyText,
+  setClassSubjectExams,
   handleEditExam,
   handleDeleteExam,
   getDifficultyColor,
 }) => {
-  console.log(selectedClass, "selectedClass>>>");
-  console.log(selectedSubject, "selectedSubject>>>");
+  console.log(selectedExam, "from teh view exam");
+  const [examId, setExamId] = useState();
 
   const handleViewExamDetails = async () => {
     try {
       let subjectId = selectedSubject._id;
       let classId = selectedClass._id;
       const response = await getExamApi(classId, subjectId);
-      console.log(response, " response frm exam");
+
+      // Fix: Access the nested data array
+      if (
+        response.data &&
+        response.data.data &&
+        Array.isArray(response.data.data)
+      ) {
+        setClassSubjectExams(response.data.data);
+      } else if (Array.isArray(response.data)) {
+        setClassSubjectExams(response.data);
+      } else {
+        console.log("Unexpected response structure:", response);
+        setClassSubjectExams([]);
+      }
     } catch (error) {
       console.log(error, "err");
+      setClassSubjectExams([]); // Set empty array on error
     }
   };
+
+  console.log(classSubjectExams, " response frm exam");
 
   useEffect(() => {
     handleViewExamDetails();
@@ -66,23 +85,27 @@ const ViewExams = ({
         <div className="grid md:grid-cols-2 gap-6">
           {classSubjectExams.map((exam) => (
             <div
-              key={exam.id}
+              key={exam._id || exam.id} // Use _id as fallback since your data shows _id
               className="bg-white rounded-xl shadow-lg p-6 relative"
             >
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <h3 className="text-xl font-semibold text-gray-800">
-                    {exam.title}
+                    {exam.title || "Untitled Exam"} {/* Add fallback */}
                   </h3>
-                  <p className="text-gray-600 text-sm">{exam.subject}</p>
+                  <p className="text-gray-600 text-sm">
+                    {exam.subject?.name || exam.subject}
+                  </p>
                 </div>
                 <div className="flex items-center space-x-2">
                   <span
                     className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(
-                      exam.questionsCount
+                      exam.selectedQuestions?.length || exam.questionsCount || 0
                     )}`}
                   >
-                    {getDifficultyText(exam.questionsCount)}
+                    {getDifficultyText(
+                      exam.selectedQuestions?.length || exam.questionsCount || 0
+                    )}
                   </span>
                   <button
                     onClick={() => handleEditExam(exam)}
@@ -91,7 +114,7 @@ const ViewExams = ({
                     <Edit className="w-4 h-4" />
                   </button>
                   <button
-                    onClick={() => handleDeleteExam(exam.id)}
+                    onClick={() => handleDeleteExam(exam._id || exam.id)}
                     className="text-red-500 hover:text-red-700 transition-colors"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -102,33 +125,50 @@ const ViewExams = ({
               <div className="space-y-3">
                 <div className="flex items-center text-gray-600">
                   <Calendar className="w-4 h-4 mr-2" />
-                  <span className="text-sm">{exam.date}</span>
+                  <span className="text-sm">
+                    {exam.startDate
+                      ? new Date(exam.startDate).toLocaleDateString()
+                      : exam.date || "No date set"}
+                  </span>
                 </div>
 
                 <div className="flex items-center text-gray-600">
                   <Clock className="w-4 h-4 mr-2" />
-                  <span className="text-sm">{exam.time}</span>
+                  <span className="text-sm">
+                    {exam.startTime || exam.time || "No time set"}
+                  </span>
                 </div>
 
                 <div className="flex items-center text-gray-600">
                   <Clock className="w-4 h-4 mr-2" />
-                  <span className="text-sm">{exam.duration} min</span>
+                  <span className="text-sm">{exam.duration || 0} min</span>
                 </div>
 
                 <div className="flex items-center text-gray-600">
                   <FileText className="w-4 h-4 mr-2" />
-                  <span className="text-sm">{exam.totalMarks} marks</span>
+                  <span className="text-sm">
+                    {exam.totalMark || exam.totalMarks || 0} marks
+                  </span>
                 </div>
               </div>
 
               <div className="mt-4 text-sm text-gray-500">
-                Questions: {exam.questionsCount} • Instructions: Read passages
-                carefully before answering
+                Questions:{" "}
+                {exam.selectedQuestions?.length || exam.questionsCount || 0} •
+                Pass Mark: {exam.passMark || exam.passMarks || 0}
               </div>
 
-              <button className="mt-4 w-full bg-teal-600 text-white py-2 px-4 rounded-lg hover:bg-teal-700 transition-colors">
+              <button
+                onClick={() => {
+                  setCurrentStep("viewExamDetails");
+                  // Pass the entire exam object instead of just the ID
+                  setSelectedExam(exam);
+                  console.log("Setting selected exam:", exam);
+                }}
+                className="mt-4 w-full bg-teal-600 text-white py-2 px-4 rounded-lg hover:bg-teal-700 transition-colors"
+              >
                 <Eye className="w-4 h-4 inline mr-2" />
-                Vewi Exam
+                View Exam
               </button>
             </div>
           ))}
@@ -154,3 +194,4 @@ const ViewExams = ({
 };
 
 export default ViewExams;
+

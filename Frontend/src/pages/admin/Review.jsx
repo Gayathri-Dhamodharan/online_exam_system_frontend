@@ -25,6 +25,7 @@ const Review = () => {
   const [selectedExam, setSelectedExam] = useState('');
   const [viewMode, setViewMode] = useState('all');
   const [selectedStudent, setSelectedStudent] = useState('');
+  const [selectSubject,setSelectSubject] = useState('');
 
   // Get unique values
   const uniqueClasses = [...new Set(studentsData.map(item => item.class))].sort();
@@ -39,6 +40,11 @@ const Review = () => {
     if (selectedExam) {
       data = data.filter(item => item.exam === selectedExam);
     }
+    if(selectSubject)
+    {
+            data = data.filter((item) => item.subject === selectedExam);
+
+    }
     return data;
   }, [studentsData, selectedClass, selectedExam]);
 
@@ -46,6 +52,11 @@ const Review = () => {
   const studentsInClass = useMemo(() => {
     return [...new Set(filteredData.map(item => item.name))].sort();
   }, [filteredData]);
+
+  // subject
+    const subjectsForStudent = useMemo(() => {
+      return [...new Set(filteredData.map((item) => item.subject))].sort();
+    }, [filteredData]);
 
   // Get data based on view mode
   const displayData = useMemo(() => {
@@ -182,52 +193,56 @@ const Review = () => {
   };
 
   return (
-    <div className="min-h-screen p-6 bg-gray-50" >
+    <div className="min-h-screen p-6 bg-gray-50">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className=" p-6 mb-6 flex justify-between">
           <div>
-             <h1 className="text-3xl font-bold text-slate-800 mb-2 flex items-center gap-3">
-            <GraduationCap className="text-green-600" size={36} />
-             Review Student Scores 
-          </h1>
-          <p className="text-slate-600">Manage and export student performance data</p>
+            <h1 className="text-3xl font-bold text-slate-800 mb-2 flex items-center gap-3">
+              <GraduationCap className="text-green-600" size={36} />
+              Review Student Scores
+            </h1>
+            <p className="text-slate-600">
+              Manage and export student performance data
+            </p>
           </div>
-          <div className='gap-4 px-4'>
+          <div className="gap-4 px-4">
             <select
-                value={selectedClass}
-                onChange={(e) => {
-                  setSelectedClass(e.target.value);
-                  setSelectedStudent('');
-                  setViewMode('all');
-                }}
-                className="px-4 py-2 mx-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              >
-                <option value="">All Classes</option>
-                {uniqueClasses.map(cls => (
-                  <option key={cls} value={cls}>{cls}</option>
-                ))}
-              </select>
+              value={selectedClass}
+              onChange={(e) => {
+                setSelectedClass(e.target.value);
+                setSelectedStudent("");
+                setViewMode("all");
+              }}
+              className="px-4 py-2 mx-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            >
+              <option value="">All Classes</option>
+              {uniqueClasses.map((cls) => (
+                <option key={cls} value={cls}>
+                  {cls}
+                </option>
+              ))}
+            </select>
 
-               <select
-                value={selectedExam}
-                onChange={(e) => {
-                  setSelectedExam(e.target.value);
-                  setSelectedStudent('');
-                  setViewMode('all');
-                }}
-                className="px-4 py-2 mx-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              >
-                <option value="">All Exams</option>
-                {uniqueExams.map(exam => (
-                  <option key={exam} value={exam}>{exam}</option>
-                ))}
-              </select>
+            <select
+              value={selectedExam}
+              onChange={(e) => {
+                setSelectedExam(e.target.value);
+                setSelectedStudent("");
+                setViewMode("all");
+              }}
+              className="px-4 py-2 mx-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            >
+              <option value="">All Exams</option>
+              {uniqueExams.map((exam) => (
+                <option key={exam} value={exam}>
+                  {exam}
+                </option>
+              ))}
+            </select>
           </div>
-         
         </div>
 
-       
         {/* View Mode Selection */}
         {(selectedClass || selectedExam) && (
           <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6 mb-6">
@@ -235,35 +250,35 @@ const Review = () => {
             <div className="flex flex-wrap gap-4">
               <button
                 onClick={() => {
-                  setViewMode('all');
-                  setSelectedStudent('');
+                  setViewMode("all");
+                  setSelectedStudent("");
                 }}
                 className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
-                  viewMode === 'all' 
-                    ? 'bg-green-600 text-white' 
-                    : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
+                  viewMode === "all"
+                    ? "bg-green-600 text-white"
+                    : "bg-slate-200 text-slate-700 hover:bg-slate-300"
                 }`}
               >
                 <Table size={18} />
                 All Students & Subjects
               </button>
               <button
-                onClick={() => setViewMode('byStudent')}
+                onClick={() => setViewMode("byStudent")}
                 className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
-                  viewMode === 'byStudent' 
-                    ? 'bg-green-600 text-white' 
-                    : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
+                  viewMode === "byStudent"
+                    ? "bg-green-600 text-white"
+                    : "bg-slate-200 text-slate-700 hover:bg-slate-300"
                 }`}
               >
                 <User size={18} />
                 By Student
               </button>
               <button
-                onClick={() => setViewMode('bySubject')}
+                onClick={() => setViewMode("bySubject")}
                 className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
-                  viewMode === 'bySubject' 
-                    ? 'bg-green-600 text-white' 
-                    : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
+                  viewMode === "bySubject"
+                    ? "bg-green-600 text-white"
+                    : "bg-slate-200 text-slate-700 hover:bg-slate-300"
                 }`}
               >
                 <BookOpen size={18} />
@@ -272,17 +287,40 @@ const Review = () => {
             </div>
 
             {/* Student Selection for Individual View */}
-            {viewMode === 'byStudent' && (
+            {viewMode === "byStudent" && (
               <div className="mt-4">
-                <label className="block font-semibold text-slate-700 mb-2">Select Student:</label>
+                <label className="block font-semibold text-slate-700 mb-2">
+                  Select Student:
+                </label>
                 <select
                   value={selectedStudent}
                   onChange={(e) => setSelectedStudent(e.target.value)}
                   className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 >
                   <option value="">Choose a student...</option>
-                  {studentsInClass.map(student => (
-                    <option key={student} value={student}>{student}</option>
+                  {studentsInClass.map((student) => (
+                    <option key={student} value={student}>
+                      {student}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+            {viewMode === "bySubject" && (
+              <div className="mt-4">
+                <label className="block font-semibold text-slate-700 mb-2">
+                  Select Subject:
+                </label>
+                <select
+                  value={selectSubject}
+                  onChange={(e) => setSelectSubject(e.target.value)}
+                  className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                >
+                  <option value="">Choose a student...</option>
+                  {subjectsForStudent.map((student) => (
+                    <option key={student} value={student}>
+                      {student}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -293,82 +331,111 @@ const Review = () => {
         {/* Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
           <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6">
-            <h3 className="text-lg font-semibold text-slate-700 mb-2">Total Students</h3>
-            <p className="text-3xl font-bold text-green-600">{stats.totalStudents}</p>
+            <h3 className="text-lg font-semibold text-slate-700 mb-2">
+              Total Students
+            </h3>
+            <p className="text-3xl font-bold text-green-600">
+              {stats.totalStudents}
+            </p>
           </div>
           <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6">
-            <h3 className="text-lg font-semibold text-slate-700 mb-2">Average Score</h3>
-            <p className="text-3xl font-bold text-green-600">{stats.avgScore}%</p>
+            <h3 className="text-lg font-semibold text-slate-700 mb-2">
+              Average Score
+            </h3>
+            <p className="text-3xl font-bold text-green-600">
+              {stats.avgScore}%
+            </p>
           </div>
           <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6">
-            <h3 className="text-lg font-semibold text-slate-700 mb-2">Total Exams</h3>
-            <p className="text-3xl font-bold text-green-600">{stats.totalExams}</p>
+            <h3 className="text-lg font-semibold text-slate-700 mb-2">
+              Total Exams
+            </h3>
+            <p className="text-3xl font-bold text-green-600">
+              {stats.totalExams}
+            </p>
           </div>
         </div>
-
-        {/* Export Buttons */}
-        {/* <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6 mb-6">
-          <h3 className="font-semibold text-slate-700 mb-4">Export Options:</h3>
-          <div className="flex flex-wrap gap-4">
-            <button
-              onClick={exportToPDF}
-              className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 flex items-center gap-2 transition-colors"
-            >
-              <FileText size={20} />
-              Export PDF Report
-            </button>
-            <button
-              onClick={exportToCSV}
-              className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2 transition-colors"
-            >
-              <Download size={20} />
-              Export CSV
-            </button>
-          </div>
-        </div> */}
 
         {/* Data Table */}
         <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden">
           <div className="p-6 border-b border-gray-200">
             <h3 className="text-xl font-semibold text-slate-800">
-              {viewMode === 'byStudent' && selectedStudent 
-                ? `Scores for ${selectedStudent}` 
-                : `${selectedClass ? `Class ${selectedClass}` : 'All Classes'} ${selectedExam ? `- ${selectedExam}` : '- All Exams'}`}
+              {viewMode === "byStudent" && selectedStudent
+                ? `Scores for ${selectedStudent}`
+                : `${
+                    selectedClass ? `Class ${selectedClass}` : "All Classes"
+                  } ${selectedExam ? `- ${selectedExam}` : "- All Exams"}`}
             </h3>
           </div>
-          
+
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-green-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Student</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Class</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Subject</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Exam</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Score</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Percentage</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Date</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Actions</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                    Student
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                    Class
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                    Subject
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                    Exam
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                    Score
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                    Percentage
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                    Date
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-slate-200">
                 {displayData.map((item) => (
                   <tr key={item.id} className="hover:bg-slate-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">{item.name}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">{item.class}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">{item.subject}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">{item.exam}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
+                      {item.name}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                      {item.class}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                      {item.subject}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                      {item.exam}
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <span className={`font-semibold ${getScoreColor(item.score, item.maxScore)}`}>
+                      <span
+                        className={`font-semibold ${getScoreColor(
+                          item.score,
+                          item.maxScore
+                        )}`}
+                      >
                         {item.score}/{item.maxScore}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <span className={`font-semibold ${getScoreColor(item.score, item.maxScore)}`}>
+                      <span
+                        className={`font-semibold ${getScoreColor(
+                          item.score,
+                          item.maxScore
+                        )}`}
+                      >
                         {((item.score / item.maxScore) * 100).toFixed(1)}%
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.date}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {item.date}
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <button
                         onClick={() => sendStudentPDF(item.name)}
@@ -388,7 +455,9 @@ const Review = () => {
 
         {displayData.length === 0 && (
           <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-12 text-center">
-            <p className="text-gray-500 text-lg">No data found. Please select a class to view student scores.</p>
+            <p className="text-gray-500 text-lg">
+              No data found. Please select a class to view student scores.
+            </p>
           </div>
         )}
       </div>
@@ -398,332 +467,3 @@ const Review = () => {
 
 export default Review;
 
-// import React, { useState, useMemo, useEffect } from "react";
-// import { FileText, User, BookOpen, GraduationCap } from "lucide-react";
-// import { getAllResults } from "../../service/api";
-
-// const Review = () => {
-//   const [studentsData, setStudentsData] = useState([]);
-//   const [selectedClass, setSelectedClass] = useState("");
-//   const [selectedExam, setSelectedExam] = useState("");
-//   const [viewMode, setViewMode] = useState("all");
-//   const [selectedStudent, setSelectedStudent] = useState("");
-
-//   useEffect(() => {
-//     getAllResults().then((res) => {
-//       // flatten into table rows
-//       setStudentsData(
-//         res.data.map((rec) => ({
-//           id: rec._id,
-//           name: `${rec.student.firstName} ${rec.student.lastName}`,
-//           class: rec.student.class,
-//           subject: rec.examTemplate.subject.name || rec.examTemplate.subject,
-//           exam: rec.examTemplate.title,
-//           score: rec.obtainedMarks,
-//           maxScore: rec.examTemplate.totalMark,
-//           date: new Date(rec.updatedAt).toLocaleDateString(),
-//         }))
-//       );
-//     });
-//   }, []);
-
-//   // filtering & stats
-//   const uniqueClasses = useMemo(
-//     () => [...new Set(studentsData.map((d) => d.class))].sort(),
-//     [studentsData]
-//   );
-//   const uniqueExams = useMemo(
-//     () => [...new Set(studentsData.map((d) => d.exam))].sort(),
-//     [studentsData]
-//   );
-
-//   const filteredData = useMemo(() => {
-//     return studentsData.filter((d) => {
-//       return (
-//         (!selectedClass || d.class === selectedClass) &&
-//         (!selectedExam || d.exam === selectedExam)
-//       );
-//     });
-//   }, [studentsData, selectedClass, selectedExam]);
-
-//   const studentsInClass = useMemo(() => {
-//     return [...new Set(filteredData.map((d) => d.name))].sort();
-//   }, [filteredData]);
-
-//   const displayData = useMemo(() => {
-//     if (viewMode === "byStudent" && selectedStudent) {
-//       return filteredData.filter((d) => d.name === selectedStudent);
-//     }
-//     return filteredData;
-//   }, [filteredData, viewMode, selectedStudent]);
-
-//   const stats = useMemo(() => {
-//     if (displayData.length === 0)
-//       return { totalStudents: 0, avgScore: 0, totalExams: 0 };
-//     const uniqueStudentsCount = new Set(
-//       displayData.map((d) => d.name)
-//     ).size;
-//     const totalScore = displayData.reduce((s, d) => s + d.score, 0);
-//     const avgScore = totalScore / displayData.length;
-//     return {
-//       totalStudents: uniqueStudentsCount,
-//       avgScore: avgScore.toFixed(1),
-//       totalExams: displayData.length,
-//     };
-//   }, [displayData]);
-
-//   const sendStudentPDF = (studentName) => {
-//     alert(`Implement send PDF for ${studentName}`);
-//   };
-
-//   const getScoreColor = (score, max) => {
-//     const p = (score / max) * 100;
-//     if (p >= 90) return "text-green-600";
-//     if (p >= 75) return "text-blue-600";
-//     if (p >= 60) return "text-yellow-600";
-//     return "text-red-600";
-//   };
-
-//   return (
-//     <div className="min-h-screen p-6 bg-gray-50">
-//       <div className="max-w-7xl mx-auto">
-//         {/* Header */}
-//         <div className="p-6 mb-6 flex justify-between">
-//           <div>
-//             <h1 className="text-3xl font-bold text-slate-800 mb-2 flex items-center gap-3">
-//               <GraduationCap className="text-green-600" size={36} />
-//               Review Student Scores
-//             </h1>
-//             <p className="text-slate-600">
-//               Manage and export student performance data
-//             </p>
-//           </div>
-//           <div className="gap-4 px-4">
-//             <select
-//               value={selectedClass}
-//               onChange={(e) => {
-//                 setSelectedClass(e.target.value);
-//                 setSelectedStudent("");
-//                 setViewMode("all");
-//               }}
-//               className="px-4 py-2 mx-2 border border-slate-300 rounded-lg"
-//             >
-//               <option value="">All Classes</option>
-//               {uniqueClasses.map((cls) => (
-//                 <option key={cls} value={cls}>
-//                   {cls}
-//                 </option>
-//               ))}
-//             </select>
-
-//             <select
-//               value={selectedExam}
-//               onChange={(e) => {
-//                 setSelectedExam(e.target.value);
-//                 setSelectedStudent("");
-//                 setViewMode("all");
-//               }}
-//               className="px-4 py-2 mx-2 border border-slate-300 rounded-lg"
-//             >
-//               <option value="">All Exams</option>
-//               {uniqueExams.map((ex) => (
-//                 <option key={ex} value={ex}>
-//                   {ex}
-//                 </option>
-//               ))}
-//             </select>
-//           </div>
-//         </div>
-
-//         {/* View Mode */}
-//         {(selectedClass || selectedExam) && (
-//           <div className="bg-white p-6 mb-6 rounded-xl shadow-lg">
-//             <h3 className="font-semibold text-slate-700 mb-4">View Options:</h3>
-//             <div className="flex flex-wrap gap-4">
-//               <button
-//                 onClick={() => {
-//                   setViewMode("all");
-//                   setSelectedStudent("");
-//                 }}
-//                 className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
-//                   viewMode === "all"
-//                     ? "bg-green-600 text-white"
-//                     : "bg-slate-200 text-slate-700"
-//                 }`}
-//               >
-//                 <Table size={18} />
-//                 All Students & Subjects
-//               </button>
-//               <button
-//                 onClick={() => setViewMode("byStudent")}
-//                 className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
-//                   viewMode === "byStudent"
-//                     ? "bg-green-600 text-white"
-//                     : "bg-slate-200 text-slate-700"
-//                 }`}
-//               >
-//                 <User size={18} />
-//                 By Student
-//               </button>
-//               <button
-//                 onClick={() => setViewMode("bySubject")}
-//                 className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
-//                   viewMode === "bySubject"
-//                     ? "bg-green-600 text-white"
-//                     : "bg-slate-200 text-slate-700"
-//                 }`}
-//               >
-//                 <BookOpen size={18} />
-//                 By Subject
-//               </button>
-//             </div>
-
-//             {viewMode === "byStudent" && (
-//               <div className="mt-4">
-//                 <label className="font-semibold text-slate-700 mb-2 block">
-//                   Select Student:
-//                 </label>
-//                 <select
-//                   value={selectedStudent}
-//                   onChange={(e) => setSelectedStudent(e.target.value)}
-//                   className="px-4 py-2 border border-slate-300 rounded-lg"
-//                 >
-//                   <option value="">Choose a student...</option>
-//                   {studentsInClass.map((st) => (
-//                     <option key={st} value={st}>
-//                       {st}
-//                     </option>
-//                   ))}
-//                 </select>
-//               </div>
-//             )}
-//           </div>
-//         )}
-
-//         {/* Stats */}
-//         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-//           <div className="bg-white p-6 rounded-xl shadow-lg text-center">
-//             <h3 className="text-lg font-semibold text-slate-700 mb-2">
-//               Total Students
-//             </h3>
-//             <p className="text-3xl font-bold text-green-600">
-//               {stats.totalStudents}
-//             </p>
-//           </div>
-//           <div className="bg-white p-6 rounded-xl shadow-lg text-center">
-//             <h3 className="text-lg font-semibold text-slate-700 mb-2">
-//               Average Score
-//             </h3>
-//             <p className="text-3xl font-bold text-green-600">
-//               {stats.avgScore}%
-//             </p>
-//           </div>
-//           <div className="bg-white p-6 rounded-xl shadow-lg text-center">
-//             <h3 className="text-lg font-semibold text-slate-700 mb-2">
-//               Total Exams
-//             </h3>
-//             <p className="text-3xl font-bold text-green-600">
-//               {stats.totalExams}
-//             </p>
-//           </div>
-//         </div>
-
-//         {/* Data Table */}
-//         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-//           <div className="p-6 border-b border-gray-200">
-//             <h3 className="text-xl font-semibold text-slate-800">
-//               {viewMode === "byStudent" && selectedStudent
-//                 ? `Scores for ${selectedStudent}`
-//                 : `${selectedClass || "All Classes"} ${
-//                     selectedExam ? `- ${selectedExam}` : ""
-//                   }`}
-//             </h3>
-//           </div>
-//           <div className="overflow-x-auto">
-//             <table className="w-full">
-//               <thead className="bg-green-50">
-//                 <tr>
-//                   {[
-//                     "Student",
-//                     "Class",
-//                     "Subject",
-//                     "Exam",
-//                     "Score",
-//                     "Percentage",
-//                     "Date",
-//                     "Actions",
-//                   ].map((h) => (
-//                     <th
-//                       key={h}
-//                       className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider"
-//                     >
-//                       {h}
-//                     </th>
-//                   ))}
-//                 </tr>
-//               </thead>
-//               <tbody className="bg-white divide-y divide-slate-200">
-//                 {displayData.map((item) => (
-//                   <tr key={item.id} className="hover:bg-slate-50">
-//                     <td className="px-6 py-4 text-sm font-medium text-slate-900">
-//                       {item.name}
-//                     </td>
-//                     <td className="px-6 py-4 text-sm text-slate-500">
-//                       {item.class}
-//                     </td>
-//                     <td className="px-6 py-4 text-sm text-slate-500">
-//                       {item.subject}
-//                     </td>
-//                     <td className="px-6 py-4 text-sm text-slate-500">
-//                       {item.exam}
-//                     </td>
-//                     <td className="px-6 py-4 text-sm">
-//                       <span
-//                         className={`font-semibold ${getScoreColor(
-//                           item.score,
-//                           item.maxScore
-//                         )}`}
-//                       >
-//                         {item.score}/{item.maxScore}
-//                       </span>
-//                     </td>
-//                     <td className="px-6 py-4 text-sm">
-//                       <span
-//                         className={`font-semibold ${getScoreColor(
-//                           item.score,
-//                           item.maxScore
-//                         )}`}
-//                       >
-//                         {((item.score / item.maxScore) * 100).toFixed(1)}%
-//                       </span>
-//                     </td>
-//                     <td className="px-6 py-4 text-sm text-gray-500">
-//                       {item.date}
-//                     </td>
-//                     <td className="px-6 py-4 text-sm">
-//                       <button
-//                         onClick={() => sendStudentPDF(item.name)}
-//                         className="text-cyan-600 hover:text-cyan-900 flex items-center gap-1"
-//                         title="Send individual report"
-//                       >
-//                         <FileText size={16} />
-//                         Send PDF
-//                       </button>
-//                     </td>
-//                   </tr>
-//                 ))}
-//               </tbody>
-//             </table>
-//           </div>
-//           {displayData.length === 0 && (
-//             <div className="p-12 text-center text-gray-500">
-//               No data found. Please select a class or exam above.
-//             </div>
-//           )}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Review;

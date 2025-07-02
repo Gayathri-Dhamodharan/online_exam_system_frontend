@@ -19,11 +19,7 @@ import Exam from "../pages/user/Exam";
 import Result from "../pages/user/Result";
 
 // ── Split QuestionBank screens ──
-import Dashboard from "../pages/admin/questions/Dashboard";
-import Subjects from "../pages/admin/questions/Subjects";
-import Questions from "../pages/admin/questions/Questions";
-import CreatedPapers from "../pages/admin/questions/CreatedPapers";
-import ExamDetails from "../pages/admin/questions/ExamDetails";
+
 import QuestionBank from "../pages/admin/QuestionBank";
 
 const AppRoutes = () => (
@@ -43,14 +39,6 @@ const AppRoutes = () => (
         <Route index element={<AdminDashboard />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
 
-        {/* questions/* */}
-        {/* <Route path="questions">
-          <Route index element={<Dashboard />} />
-          <Route path="subjects" element={<Subjects />} />
-          <Route path=":subjectId" element={<Questions />} />
-          <Route path="created-papers" element={<CreatedPapers />} />
-          <Route path="exam-details/:id" element={<ExamDetails />} />
-        </Route> */}
         <Route path="/admin/questions" element={<QuestionBank />} />
 
         {/* other admin pages */}

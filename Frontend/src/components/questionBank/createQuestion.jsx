@@ -188,17 +188,17 @@ const CreateQuestion = ({
                 )}
               </div>
 
-              <div>
+              <div className="hidden">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Marks
                 </label>
                 <input
                   type="number"
-                  value={currentQuestion.marks}
+                  value="1"
                   onChange={(e) =>
                     setCurrentQuestion({
                       ...currentQuestion,
-                      marks: parseInt(e.target.value) || 1,
+                      marks: 1,
                     })
                   }
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
@@ -270,5 +270,5 @@ const CreateQuestion = ({
     </div>
   );
 };
-  
+
 export default CreateQuestion;

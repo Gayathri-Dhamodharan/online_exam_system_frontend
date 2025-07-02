@@ -99,7 +99,7 @@ export default function AdminLayout() {
         position="fixed"
         sx={{
           zIndex: theme.zIndex.drawer + 1,
-          background: "linear-gradient(to bottom, #006a70, rgb(44, 150, 152))",
+          background: "linear-gradient(to bottom, #006a70, rgb(1, 79, 81))",
         }}
       >
         <Toolbar>

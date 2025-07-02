@@ -107,7 +107,7 @@ const CreateQuestion = ({
                   }
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
                 >
-                  <option value="mcq">Multiple Choice (MCQ)</option>
+                  <option value="MCQ">Multiple Choice (MCQ)</option>
                   <option value="True/False">True or False</option>
                 </select>
               </div>
@@ -130,7 +130,7 @@ const CreateQuestion = ({
                 />
               </div>
 
-              {currentQuestion.type === "mcq" && (
+              {currentQuestion.type === "MCQ" && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Options

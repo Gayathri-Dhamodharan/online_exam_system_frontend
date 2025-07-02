@@ -80,14 +80,14 @@ const QuestionDashboard = ({
               View All Exams
             </button>
             <div className="mt-4 text-sm text-gray-500">
-              {/* Total Exams:{""} */}
-              {/* {
+              Total Exams:{""}
+              {
                 exams.filter(
                   (e) =>
                     e.class === selectedClass?.name &&
                     e.subject === selectedSubject?.name
                 ).length
-              } */}
+              }
             </div>
           </div>
         </div>

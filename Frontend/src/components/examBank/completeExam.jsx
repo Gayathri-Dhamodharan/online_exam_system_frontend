@@ -30,7 +30,7 @@ const CompleteExam = ({
           </h3>
           <p className="text-sm text-gray-600">
             Questions Answered: {Object.keys(answers).length} /{" "}
-            {selectedExam.questions.length}
+            {selectedExam?.questions?.length}
           </p>
           <p className="text-sm text-gray-600">
             Time Taken: {formatTime(selectedExam.duration * 60 - timeLeft)}

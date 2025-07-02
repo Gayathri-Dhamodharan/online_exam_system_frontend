@@ -275,12 +275,14 @@ const Exam = () => {
   };
 
   const beginExam = () => {
+
+
     setTimeLeft(selectedExam.duration * 60);
     setCurrentScreen("exam");
     setCurrentQuestion(0);
     // Initialize statuses
     const statuses = {};
-    selectedExam.questions.forEach((_, idx) => {
+    selectedExam?.questions?.forEach((_, idx) => {
       statuses[idx] = idx === 0 ? "current" : "not-visited";
     });
     setQuestionStatuses(statuses);
@@ -385,6 +387,8 @@ const Exam = () => {
 
   if (currentScreen === "exam") {
     const qData = selectedExam?.selectedQuestions?.[currentQuestion] || null;
+
+console.log(qData,"qData>>>>");
 
     return (
       <ExamConductingTab

@@ -1,14 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { Clock, Calendar, Timer, Award } from "lucide-react";
-import { getAllUpcomingExamAPI } from "../../service/Exams/examService";
+import React, { useEffect, useState } from 'react'
+import { Clock, Calendar, Timer, Award, } from 'lucide-react'
+import { getAllUpcomingExamAPI } from '../../service/Exams/examService';
 import dayjs from "dayjs";
 
-const ExamList = ({
-  exams,
-  getDifficultyColor,
-  getDaysLeftColor,
-  startExam,
-}) => {
+const ExamList = ({ exams, getDifficultyColor, getDaysLeftColor, startExam }) => {
   const [examDetails, setExamDetails] = useState([]);
   const classId = localStorage.getItem("class");
 
@@ -16,15 +11,15 @@ const ExamList = ({
     try {
       const response = await getAllUpcomingExamAPI(classId);
       console.log(response.data.data, " response frm exam");
-      setExamDetails(response.data.data);
+      setExamDetails(response.data.data)
     } catch (error) {
       console.log(err, "err");
     }
   };
 
   useEffect(() => {
-    handleViewUpcomingExamDetails();
-  }, []);
+    handleViewUpcomingExamDetails()
+  }, [])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4">
@@ -110,7 +105,7 @@ const ExamList = ({
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ExamList;
+export default ExamList

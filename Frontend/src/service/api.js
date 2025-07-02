@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: "https://online-exam-system-backend-kr3u.onrender.com",
   headers: { "Conten-Type": "application/json" },
 });
 

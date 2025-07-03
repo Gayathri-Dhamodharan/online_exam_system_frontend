@@ -3,7 +3,7 @@ import { Clock, Calendar, Timer, Award, } from 'lucide-react'
 import { getAllUpcomingExamAPI } from '../../service/Exams/examService';
 import dayjs from "dayjs";
 
-const ExamList = ({ exams, getDifficultyColor, getDaysLeftColor, startExam }) => {
+const ExamList = ({  getDifficultyColor, startExam }) => {
   const [examDetails, setExamDetails] = useState([]);
   const classId = localStorage.getItem("class");
 
@@ -13,7 +13,7 @@ const ExamList = ({ exams, getDifficultyColor, getDaysLeftColor, startExam }) =>
       console.log(response.data.data, " response frm exam");
       setExamDetails(response.data.data)
     } catch (error) {
-      console.log(err, "err");
+      console.log(error, "err");
     }
   };
 

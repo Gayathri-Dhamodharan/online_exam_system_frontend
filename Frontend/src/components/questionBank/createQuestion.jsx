@@ -235,18 +235,7 @@ const CreateQuestion = ({
                       <span className="text-sm text-teal-600 font-medium">
                         {question.marks} marks
                       </span>
-                      <button
-                        onClick={() => handleEditQuestion(question?._id)}
-                        className="text-blue-500 hover:text-blue-700 transition-colors"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteQuestion(question._id)}
-                        className="text-red-500 hover:text-red-700 transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      
                     </div>
                   </div>
                   <p className="text-gray-800 text-sm mb-2">

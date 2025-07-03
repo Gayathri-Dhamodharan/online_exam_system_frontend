@@ -1,5 +1,3 @@
-
-
 import React, { useEffect, useState } from "react";
 import {
   BarChart,
@@ -18,7 +16,7 @@ import {
   Award,
   Clock,
 } from "lucide-react";
-import { getAllUpcomingExamAPI } from "../../service/Exams/examService";
+import { getUserDashboardData } from "../../service/Dashboard/UserDashboad";
 
 const UserDashboard = () => {
   // Sample data for the dashboard
@@ -39,46 +37,21 @@ const UserDashboard = () => {
   ];
 
   // Sample data for upcoming exams table
+  const userID = localStorage.getItem("userId");
+  const [dashBoardDetails, setDashBoardDetails] = useState({});
 
-  const upcomingExams = [
-    {
-      id: 1,
-      subject: "Advanced Mathematics",
-      title: "Calculus & Integration",
-      date: "2024-07-15",
-      score: "Not Attempted",
-    },
-    {
-      id: 2,
-      subject: "Organic Chemistry",
-      title: "Reaction Mechanisms",
-      date: "2024-07-18",
-      score: "Not Attempted",
-    },
-    {
-      id: 3,
-      subject: "Modern Physics",
-      title: "Quantum Mechanics",
-      date: "2024-07-20",
-      score: "Not Attempted",
-    },
-  ];
-const classId = localStorage.getItem("class");
-const [examDetails, setExamDetails] = useState([]);
-
-const getTableData = async () => {
-  try {
-    const response = await getAllUpcomingExamAPI(classId);
-    console.log(response.data.data, " response frm exam");
-    setExamDetails(response.data.data);
-  } catch (error) {
-    console.log(error, "err");
-  }
-};
   useEffect(() => {
-   getTableData();
-  }, [])
-  
+    const fetchDashboardData = async () => {
+      try {
+        const response = await getUserDashboardData(userID);
+        setDashBoardDetails(response.data);
+      } catch (error) {
+        console.log(error, "err");
+      }
+    };
+    fetchDashboardData();
+  }, []);
+
   const StatCard = ({ title, value, icon: Icon, gradient }) => (
     <div
       className={`${gradient} rounded-xl p-6 text-teal-800 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105`}
@@ -111,26 +84,26 @@ const getTableData = async () => {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard
-            title="Questions Attended"
-            value={statsData.questionsAttended}
+            title="Exams Attended"
+            value={dashBoardDetails?.card_data?.ExamsAttended || 0}
             icon={BookOpen}
             gradient="bg-gradient-to-br from-teal-50 to-teal-150"
           />
           <StatCard
             title="Upcoming Exams"
-            value={statsData.upcomingExams}
+            value={dashBoardDetails?.card_data?.upcomingExams || 0}
             icon={Calendar}
             gradient="bg-gradient-to-br from-teal-50 to-teal-150"
           />
           <StatCard
             title="Highest Scored Subject"
-            value={statsData.highestScoreSubject}
+            value={dashBoardDetails?.card_data?.highestScoreSubject || "N/A"}
             icon={Award}
             gradient="bg-gradient-to-br from-teal-50 to-teal-150"
           />
           <StatCard
             title="Subject to Focus"
-            value={statsData.subjectToFocus}
+            value={dashBoardDetails?.card_data?.subjectToFocus || "N/A"}
             icon={AlertCircle}
             gradient="bg-gradient-to-br from-teal-50 to-teal-150"
           />
@@ -149,7 +122,7 @@ const getTableData = async () => {
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
-                  data={examData}
+                  data={dashBoardDetails?.graph_data || []}
                   margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -214,57 +187,26 @@ const getTableData = async () => {
                     <th className="px-4 py-3 text-left text-sm font-semibold text-teal-800">
                       Date
                     </th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-teal-800 rounded-tr-lg">
-                      Status
-                    </th>
                   </tr>
                 </thead>
-                {/* <tbody>
-                  {upcomingExams.map((exam, index) => (
-                    <tr
-                      key={exam.id}
-                      className={`border-b border-gray-100 hover:bg-teal-50 transition-colors duration-200 ${
-                        index === upcomingExams.length - 1 ? "border-b-0" : ""
-                      }`}
-                    >
-                      <td className="px-4 py-4 text-sm font-medium text-gray-900">
-                        {exam.subject}
-                      </td>
-                      <td className="px-4 py-4 text-sm text-gray-700">
-                        {exam.title}
-                      </td>
-                      <td className="px-4 py-4 text-sm text-gray-700">
-                        {exam.date}
-                      </td>
-                      <td className="px-4 py-4">
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                          {exam.score}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody> */}
                 <tbody>
-                  {examDetails.map((exam, index) => (
+                  {(dashBoardDetails?.table_value || []).map((exam, index) => (
                     <tr
-                      key={exam._id}
+                      key={exam?._id}
                       className={`border-b border-gray-100 hover:bg-teal-50 transition-colors duration-200 ${
-                        index === examDetails.length - 1 ? "border-b-0" : ""
+                        index === dashBoardDetails.table_value.length - 1
+                          ? "border-b-0"
+                          : ""
                       }`}
                     >
                       <td className="px-4 py-4 text-sm font-medium text-gray-900">
-                        {exam.subject?.name || "N/A"}
+                        {exam?.Subject || "N/A"}
                       </td>
                       <td className="px-4 py-4 text-sm text-gray-700">
-                        {exam.title}
+                        {exam?.Title || "N/A"}
                       </td>
                       <td className="px-4 py-4 text-sm text-gray-700">
-                        {new Date(exam.startDate).toLocaleDateString()}
-                      </td>
-                      <td className="px-4 py-4">
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                          Upcoming
-                        </span>
+                        {exam?.Date || "N/A"}
                       </td>
                     </tr>
                   ))}
@@ -282,8 +224,8 @@ const getTableData = async () => {
                 Keep Up the Great Work!
               </h3>
               <p className="text-teal-100">
-                You're making excellent progress. Focus on Physics to improve
-                your overall performance.
+                {`You're making excellent progress. Focus on ${dashBoardDetails?.card_data?.subjectToFocus || "N/A"} to improve
+                your overall performance.`}
               </p>
             </div>
           </div>
@@ -294,4 +236,3 @@ const getTableData = async () => {
 };
 
 export default UserDashboard;
-

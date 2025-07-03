@@ -457,7 +457,7 @@ const ViewExams = ({
                       exam.selectedQuestions?.length || exam.questionsCount || 0
                     )}
                   </span>
-                  <button
+                  {/* <button
                     onClick={() => handleEditExam(exam)}
                     className="text-blue-500 hover:text-blue-700 transition-colors"
                   >
@@ -468,7 +468,7 @@ const ViewExams = ({
                     className="text-red-500 hover:text-red-700 transition-colors"
                   >
                     <Trash2 className="w-4 h-4" />
-                  </button>
+                  </button> */}
                 </div>
               </div>
 
@@ -485,7 +485,7 @@ const ViewExams = ({
                 <div className="flex items-center text-gray-600">
                   <Clock className="w-4 h-4 mr-2" />
                   <span className="text-sm">
-                    {exam.startTime || exam.time || "No time set"}
+                    {exam.startTime || exam.startTime || "No time set"}
                   </span>
                 </div>
 

@@ -6,13 +6,19 @@ const CreateExam = ({
   setCurrentStep,
   currentExam,
   setCurrentExam,
-  classSubjectQuestions,
   handleCreateExam,
-  getAllQuestions,
-  questionsData ,
+  questionsData,
 }) => {
-  console.log(questionsData, "questionsData");
-  
+  const uniqueExams = [
+    "Unit Test",
+    "Mid Term",
+    "Quarterly",
+    "Half Yearly",
+    "Annual",
+  ];
+  const handleExamChange = (e) => {
+    setCurrentExam({ ...currentExam, title: e.target.value });
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-teal-100 to-teal-600 p-6">
       <div className="max-w-4xl mx-auto">
@@ -34,14 +40,17 @@ const CreateExam = ({
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Exam Title
               </label>
-              <input
+              <select
                 value={currentExam.title}
-                onChange={(e) =>
-                  setCurrentExam({ ...currentExam, title: e.target.value })
-                }
+                onChange={handleExamChange}
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
-                placeholder="Enter exam title"
-              />
+              >
+                {uniqueExams.map((exam) => (
+                  <option key={exam} value={exam}>
+                    {exam}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div>
@@ -84,6 +93,21 @@ const CreateExam = ({
                 }
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
                 placeholder="e.g., 60"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                PassMark
+              </label>
+              <input
+                type="number"
+                value={currentExam.passMArk}
+                onChange={(e) =>
+                  setCurrentExam({ ...currentExam, passMArk: e.target.value })
+                }
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
+                placeholder="enter pass mark"
               />
             </div>
           </div>
@@ -135,7 +159,7 @@ const CreateExam = ({
                 </div>
               ))}
 
-              {classSubjectQuestions.length === 0 && (
+              {questionsData.length === 0 && (
                 <p className="text-gray-500 text-center py-4">
                   No questions available. Please create questions first.
                 </p>

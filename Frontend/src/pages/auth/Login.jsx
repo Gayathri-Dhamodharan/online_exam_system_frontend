@@ -7,7 +7,8 @@ import { useNavigate } from "react-router-dom";
 import api from "../../service/api";
 
 // point axios at your backend
-axios.defaults.baseURL = "http://localhost:5000";
+axios.defaults.baseURL =
+  "https://online-exam-system-backend-kr3u.onrender.com/";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);

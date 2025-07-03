@@ -6,30 +6,21 @@ import { addQuestion } from "../../service/Questions/addQuestions";
 import { getQuestions } from "../../service/Questions/getQuestions";
 
 const CreateQuestion = ({
-  questions,
   selectedClass,
   selectedSubject,
   setCurrentStep,
   setCurrentQuestion,
   currentQuestion,
   classSubjectQuestions,
-  setQuestions,
-  handleEditQuestion,
-  handleDeleteQuestion,
   resetCurrentQuestion,
   questionsData,
   getAllQuestions,
 }) => {
   //  const id =localStorage.getItem("id");
 
-  console.log(
-    classSubjectQuestions,
-    "curnewQuestionrentQuestioncnewQuestionurrentQuestion"
-  );
   const role = localStorage.getItem("role");
   const userId = localStorage.getItem("userId");
-  console.log(selectedClass, "selectedClass");
-  console.log(selectedSubject, "selectedSubject");
+ 
   const handleCreateQuestion = async () => {
     if (currentQuestion.questionText && currentQuestion.answer) {
       const { type, ...rest } = currentQuestion;
@@ -46,7 +37,7 @@ const CreateQuestion = ({
       };
       try {
         const response = await addQuestion(newQuestion);
-        console.log(response, "ress");
+       
         if (response?.status == 201) {
           alert("Question created successfully");
           resetCurrentQuestion();
@@ -54,7 +45,6 @@ const CreateQuestion = ({
         }
       } catch (err) {
         alert("Something went wrong");
-        console.log(err, "err");
       }
     } else {
       alert("Please fill the required fields");

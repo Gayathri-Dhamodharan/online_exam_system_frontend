@@ -18,9 +18,6 @@ const QuestionDashboard = ({
             <h1 className="text-3xl font-bold text-gray-800">
               Question Bank Dashboard
             </h1>
-            {/* <p className="text-gray-600 mt-2">
-             Class - {selectedClass} / {selectedSubject}
-            </p> */}
           </div>
           <button
             onClick={() => setCurrentStep("classSubject")}
@@ -49,16 +46,7 @@ const QuestionDashboard = ({
             >
               Start Creating Questions
             </button>
-            <div className="mt-4 text-sm text-gray-500">
-              Total Questions:{questionsData?.length}
-              {
-                questions.filter(
-                  (q) =>
-                    q.class === selectedClass?.name &&
-                    q.subject === selectedSubject?.name
-                ).length
-              }
-            </div>
+           
           </div>
 
           {/* View Exams Card */}
@@ -79,7 +67,7 @@ const QuestionDashboard = ({
             >
               View All Exams
             </button>
-            <div className="mt-4 text-sm text-gray-500">
+            {/* <div className="mt-4 text-sm text-gray-500">
               Total Exams:{""}
               {
                 exams.filter(
@@ -88,7 +76,7 @@ const QuestionDashboard = ({
                     e.subject === selectedSubject?.name
                 ).length
               }
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

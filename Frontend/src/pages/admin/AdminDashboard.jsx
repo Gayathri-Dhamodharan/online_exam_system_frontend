@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import * as LucideIcon from "lucide-react";
 import {
@@ -43,7 +44,7 @@ const AdminDashboard = () => {
         <h1 className="text-2xl font-bold">Admin Dashboard</h1>
         <select
           className="px-4 py-2 rounded-lg border"
-          value={classFilter===""?`All Classes`:`Class ${classFilter}`}
+          value={classFilter === "" ? `All Classes` : `Class ${classFilter}`}
           onChange={handleClassChange}
         >
           {/* Give the “All Classes” option an explicit empty-string value */}

@@ -10,7 +10,6 @@ const ExamList = ({  getDifficultyColor, startExam }) => {
   const handleViewUpcomingExamDetails = async () => {
     try {
       const response = await getAllUpcomingExamAPI(classId);
-      console.log(response.data.data, " response frm exam");
       setExamDetails(response.data.data)
     } catch (error) {
       console.log(error, "err");
@@ -80,14 +79,12 @@ const ExamList = ({  getDifficultyColor, startExam }) => {
                   </div>
                   <div className="flex items-center">
                     <Award className="w-4 h-4 mr-2" />
-                    <span>{exam.totalMark} marks</span>
+                    <span>{exam?.selectedQuestions?.length} marks</span>
                   </div>
                 </div>
                 <p className="text-sm text-gray-600">
                   <span className="font-medium">Questions:</span>{" "}
-                  {exam?.selectedQuestions?.length} •{" "}
-                  <span className="font-medium">Instructions:</span>{" "}
-                  {exam?.instructions || "No instructions"}
+                  {exam?.selectedQuestions?.length}
                 </p>
               </div>
               <div className="px-6 pb-6">
@@ -105,7 +102,7 @@ const ExamList = ({  getDifficultyColor, startExam }) => {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export default ExamList

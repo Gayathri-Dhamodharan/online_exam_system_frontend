@@ -349,20 +349,6 @@ const Exam = () => {
     try {
       console.log("Submitting exam data:", examData);
 
-      // Replace this with your actual API call
-      // const response = await fetch('/api/submit-exam', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Authorization': `Bearer ${localStorage.getItem('token')}` // if using auth
-      //   },
-      //   body: JSON.stringify(examData)
-      // });
-
-      // const result = await response.json();
-      // console.log('Exam submission result:', result);
-
-      // For now, just log the data
       console.log(
         "Exam submission data prepared:",
         JSON.stringify(examData, null, 2)

@@ -275,10 +275,13 @@ export default function UserLayout() {
               }
             }}
           >
-            <ListItemIcon sx={{ color: "rgb(1, 79, 81)" }}>
+            <ListItemIcon sx={{ color: "rgb(1, 79, 81)", cursor: "Pointer" }}>
               {item.icon}
             </ListItemIcon>
-            <ListItemText primary={item.text} />
+            <ListItemText
+              primary={item.text}
+              sx={{ cursor: "Pointer" }}
+            />
           </ListItem>
         ))}
       </List>
@@ -294,7 +297,7 @@ export default function UserLayout() {
         position="fixed"
         sx={{
           zIndex: theme.zIndex.drawer + 1,
-          background: "linear-gradient(to bottom, #006a70, rgb(1, 79, 81))",
+          background: "linear-gradient(to bottom, rgb(44, 150, 152))",
         }}
       >
         <Toolbar>
@@ -349,8 +352,7 @@ export default function UserLayout() {
             display: { xs: "block", md: "none" },
             "& .MuiDrawer-paper": {
               width: drawerWidth,
-              background:
-                "linear-gradient(to bottom, #006a70, rgb(44, 150, 152))",
+              background: "linear-gradient(to bottom, rgb(44, 150, 152))  ",
               color: "rgb(1, 79, 81)",
             },
           }}

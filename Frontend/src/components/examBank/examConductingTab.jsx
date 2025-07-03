@@ -20,11 +20,7 @@ const ExamConductingTab = ({
   saveAnswer,
   exams,
 }) => {
-  // Remove continuous console.log or make it conditional
-  // console.log(selectedExam, "selectedExam>>>>>");
-  // console.log(qData, "11111111111111qData>>>>");
 
-  // Handle answer selection - store the index directly to match parent component format
   const handleAnswerSelection = (answerIndex) => {
     setAnswers((prev) => ({
       ...prev,

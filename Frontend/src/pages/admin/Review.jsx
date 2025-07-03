@@ -38,161 +38,8 @@ const Review = () => {
     fetchDashboardData();
   }, [selectedClass,selectedExam]);
 
-  // const [viewMode, setViewMode] = useState('all');
-  // const [selectedStudent, setSelectedStudent] = useState('');
-  // const [selectSubject,setSelectSubject] = useState('');
-
-  // Get unique values
-  // const uniqueClasses = [...new Set(studentsData.map(item => item.class))].sort();
   const uniqueExams = ['AllExams','Unit Test', 'Mid Term', 'Quarterly', 'Half Yearly','Annual'];
 
-  // // Filter data by class and exam
-  // const filteredData = useMemo(() => {
-  //   let data = tableData;
-  //   if (tableData.) {
-  //     data = data.filter(item => item.class === selectedClass);
-  //   }
-  //   if (selectedExam) {
-  //     data = data.filter(item => item.exam === selectedExam);
-  //   }
-  //   if(selectSubject)
-  //   {
-  //           data = data.filter((item) => item.subject === selectedExam);
-
-  //   }
-  //   return data;
-  // }, [studentsData, selectedClass, selectedExam]);
-
-  // // Get students in filtered data
-  // const studentsInClass = useMemo(() => {
-  //   return [...new Set(filteredData.map(item => item.name))].sort();
-  // }, [filteredData]);
-
-  // // subject
-  //   const subjectsForStudent = useMemo(() => {
-  //     return [...new Set(filteredData.map((item) => item.subject))].sort();
-  //   }, [filteredData]);
-
-  // // Get data based on view mode
-  // const displayData = useMemo(() => {
-  //   if (viewMode === 'byStudent' && selectedStudent) {
-  //     return filteredData.filter(item => item.name === selectedStudent);
-  //   }
-  //   return filteredData;
-  // }, [filteredData, viewMode, selectedStudent]);
-
-  // // Calculate statistics
-  // const stats = useMemo(() => {
-  //   if (displayData.length === 0) return { totalStudents: 0, avgScore: 0, totalExams: 0 };
-
-  //   const uniqueStudentsCount = new Set(displayData.map(item => item.name)).size;
-  //   const totalScore = displayData.reduce((sum, item) => sum + item.score, 0);
-  //   const avgScore = totalScore / displayData.length;
-
-  //   return {
-  //     totalStudents: uniqueStudentsCount,
-  //     avgScore: avgScore.toFixed(1),
-  //     totalExams: displayData.length
-  //   };
-  // }, [displayData]);
-
-  // // Export functions
-  // const exportToPDF = () => {
-  //   const content = generateReportContent();
-  //   const blob = new Blob([content], { type: 'text/plain' });
-  //   const url = URL.createObjectURL(blob);
-  //   const a = document.createElement('a');
-  //   a.href = url;
-  //   a.download = `student-scores-${selectedClass || 'all'}-${Date.now()}.txt`;
-  //   a.click();
-  //   URL.revokeObjectURL(url);
-  // };
-
-  // const exportToCSV = () => {
-  //   const headers = ['Name', 'Class', 'Subject', 'Exam', 'Score', 'Max Score', 'Percentage'];
-  //   const csvContent = [
-  //     headers.join(','),
-  //     ...displayData.map(item => [
-  //       item.name,
-  //       item.class,
-  //       item.subject,
-  //       item.exam,
-  //       item.score,
-  //       item.maxScore,
-  //       `${((item.score / item.maxScore) * 100).toFixed(1)}%`,
-  //     ].join(','))
-  //   ].join('\n');
-
-  //   const blob = new Blob([csvContent], { type: 'text/csv' });
-  //   const url = URL.createObjectURL(blob);
-  //   const a = document.createElement('a');
-  //   a.href = url;
-  //   a.download = `student-scores-${selectedClass || 'all'}-${Date.now()}.csv`;
-  //   a.click();
-  //   URL.revokeObjectURL(url);
-  // };
-
-  // const generateReportContent = () => {
-  //   const title = viewMode === 'byStudent'
-  //     ? `Individual Student Report - ${selectedStudent}`
-  //     : `Class Report - ${selectedClass || 'All Classes'}`;
-
-  //   let content = `${title}\n`;
-  //   content += `Generated on: ${new Date().toLocaleDateString()}\n\n`;
-  //   content += `Statistics:\n`;
-  //   content += `Total Students: ${stats.totalStudents}\n`;
-  //   content += `Total Exams: ${stats.totalExams}\n`;
-  //   content += `Average Score: ${stats.avgScore}%\n\n`;
-  //   content += `Detailed Scores:\n`;
-  //   content += `${'='.repeat(80)}\n`;
-
-  //   displayData.forEach(item => {
-  //     content += `Student: ${item.name}\n`;
-  //     content += `Class: ${item.class} | Subject: ${item.subject} | Exam: ${item.exam}\n`;
-  //     content += `Score: ${item.score}/${item.maxScore} (${((item.score/item.maxScore)*100).toFixed(1)}%)\n`;
-  //     content += `Date: ${item.date}\n`;
-  //     content += `${'-'.repeat(40)}\n`;
-  //   });
-
-  //   return content;
-  // };
-
-  // const sendStudentPDF = (studentName) => {
-  //   const studentData = tableData.filter(item => item.name === studentName);
-  //   const content = generateStudentPDFContent(studentName, studentData);
-  //   const blob = new Blob([content], { type: 'text/plain' });
-  //   const url = URL.createObjectURL(blob);
-  //   const a = document.createElement('a');
-  //   a.href = url;
-  //   a.download = `${studentName.replace(' ', '_')}-scores-report.txt`;
-  //   a.click();
-  //   URL.revokeObjectURL(url);
-  //   alert(`Report for ${studentName} has been downloaded!`);
-  // };
-
-  // const generateStudentPDFContent = (studentName, data) => {
-  //   let content = `STUDENT SCORE REPORT\n`;
-  //   content += `Student Name: ${studentName}\n`;
-  //   content += `Class: ${data[0]?.class || 'N/A'}\n`;
-  //   content += `Report Generated: ${new Date().toLocaleDateString()}\n\n`;
-  //   content += `${'='.repeat(60)}\n`;
-  //   content += `EXAM SCORES:\n`;
-  //   content += `${'='.repeat(60)}\n\n`;
-  //   const overallPercentage = `${data[0].percentage}%`;
-
-  //   content += `\nOVERALL PERFORMANCE:\n`;
-  //   content += `Overall Percentage: ${overallPercentage}%\n`;
-
-  //   return content;
-  // };
-
-  // const getScoreColor = (score, maxScore) => {
-  //   const percentage = (score / maxScore) * 100;
-  //   if (percentage >= 90) return 'text-green-600';
-  //   if (percentage >= 75) return 'text-blue-600';
-  //   if (percentage >= 60) return 'text-yellow-600';
-  //   return 'text-red-600';
-  // };
 
   return (
     <div className="min-h-screen p-6 bg-gray-50">
@@ -225,7 +72,7 @@ const Review = () => {
               ))}
             </select>
 
-            <select
+            {/* <select
               value={selectedExam}
               onChange={handleExamChange}
               className="px-4 py-2 mx-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
@@ -235,95 +82,11 @@ const Review = () => {
                   {exam}
                 </option>
               ))}
-            </select>
+            </select> */}
           </div>
         </div>
 
-        {/* View Mode Selection */}
-        {/* {(selectedClass || selectedExam) && (
-          <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6 mb-6">
-            <h3 className="font-semibold text-slate-700 mb-4">View Options:</h3>
-            <div className="flex flex-wrap gap-4">
-              <button
-                onClick={() => {
-                  setViewMode("all");
-                  setSelectedStudent("");
-                }}
-                className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
-                  viewMode === "all"
-                    ? "bg-green-600 text-white"
-                    : "bg-slate-200 text-slate-700 hover:bg-slate-300"
-                }`}
-              >
-                <Table size={18} />
-                All Students & Subjects
-              </button>
-              <button
-                onClick={() => setViewMode("byStudent")}
-                className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
-                  viewMode === "byStudent"
-                    ? "bg-green-600 text-white"
-                    : "bg-slate-200 text-slate-700 hover:bg-slate-300"
-                }`}
-              >
-                <User size={18} />
-                By Student
-              </button>
-              <button
-                onClick={() => setViewMode("bySubject")}
-                className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
-                  viewMode === "bySubject"
-                    ? "bg-green-600 text-white"
-                    : "bg-slate-200 text-slate-700 hover:bg-slate-300"
-                }`}
-              >
-                <BookOpen size={18} />
-                By Subject
-              </button>
-            </div>
-
-            Student Selection for Individual View
-            {viewMode === "byStudent" && (
-              <div className="mt-4">
-                <label className="block font-semibold text-slate-700 mb-2">
-                  Select Student:
-                </label>
-                <select
-                  value={selectedStudent}
-                  onChange={(e) => setSelectedStudent(e.target.value)}
-                  className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                >
-                  <option value="">Choose a student...</option>
-                  {studentsInClass.map((student) => (
-                    <option key={student} value={student}>
-                      {student}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-            {viewMode === "bySubject" && (
-              <div className="mt-4">
-                <label className="block font-semibold text-slate-700 mb-2">
-                  Select Subject:
-                </label>
-                <select
-                  value={selectSubject}
-                  onChange={(e) => setSelectSubject(e.target.value)}
-                  className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                >
-                  <option value="">Choose a student...</option>
-                  {subjectsForStudent.map((student) => (
-                    <option key={student} value={student}>
-                      {student}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-          </div>
-        )}  */}
-
+    
         {/* Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
           <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6">
@@ -354,15 +117,6 @@ const Review = () => {
 
         {/* Data Table */}
         <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden">
-          {/* <div className="p-6 border-b border-gray-200">
-            <h3 className="text-xl font-semibold text-slate-800">
-              {viewMode === "byStudent" && selectedStudent
-                ? `Scores for ${selectedStudent}`
-                : `${
-                    selectedClass ? `Class ${selectedClass}` : "All Classes"
-                  } ${selectedExam ? `- ${selectedExam}` : "- All Exams"}`}
-            </h3>
-          </div> */}
 
           <div className="overflow-x-auto">
             <table className="w-full">

@@ -55,10 +55,7 @@ const QuestionBank = () => {
     selectedQuestions: [],
   });
 
-  console.log(
-    editingQuestion,
-    " editingQuestioneditingQuestioneditingQuestion"
-  );
+
 
   const handleUpdateQuestion = async () => {
     if (currentQuestion.questionText && currentQuestion.answer) {
@@ -72,7 +69,6 @@ const QuestionBank = () => {
 
       try {
         const response = await updateQuestion(editingQuestion, currentQuestion);
-        console.log("response for update ", response);
 
         if (response?.status == "200") {
           alert("updated successfully ");
@@ -90,7 +86,6 @@ const QuestionBank = () => {
     try {
       const response = await getQuestions();
       setQuestionsData(response?.data);
-      console.log(response, "response888888");
     } catch (err) {
       alert("something went wrong");
       console.log(err, "err");
@@ -99,7 +94,6 @@ const QuestionBank = () => {
   const handleDeleteQuestion = async (questionId) => {
     try {
       const deletedData = await deleteQuestionById(questionId);
-      console.log(deletedData, "deletedData");
 
       if (deletedData?.status == "200") {
         getAllQuestions();
@@ -111,22 +105,10 @@ const QuestionBank = () => {
     } catch (error) {
       console.log(error, "deletedData-error");
     }
-    // if (window.confirm("Are you sure you want to delete this question?")) {
-    //   setQuestions(questions.filter((q) => q.id !== questionId));
-    //   // Also remove from any exams
-    //   setExams(
-    //     exams.map((exam) => ({
-    //       ...exam,
-    //       selectedQuestions: exam.selectedQuestions.filter(
-    //         (qId) => qId !== questionId
-    //       ),
-    //     }))
-    //   );
-    // }
+
   };
   useEffect(() => {
     getAllQuestions();
-    console.log("initial call");
   }, []);
   const handleEditQuestion = (question) => {
     setEditingQuestion(question);
@@ -170,7 +152,6 @@ const QuestionBank = () => {
       };
       try {
         const response = await addExamApi(newExam);
-        console.log(response, " response frm exam");
       } catch (err) {
         console.log(err, "err");
       }
@@ -230,16 +211,10 @@ const QuestionBank = () => {
     });
   };
 
-  // const handleDeleteExam = (examId) => {
-  //   if (window.confirm("Are you sure you want to delete this exam?")) {
-  //     setExams(exams.filter((exam) => exam.id !== examId));
-  //   }
-  // };
 
   const handleViewExamDetails = async (exam) => {
     try {
       const response = await getExamApi(newExam);
-      console.log(response, " response frm exam");
     } catch (error) {
       console.log(error, "err");
     }

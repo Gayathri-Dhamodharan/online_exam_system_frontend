@@ -1,30 +1,24 @@
-import React, { useEffect, useState } from "react";
-import { Clock, Calendar, Timer, Award } from "lucide-react";
-import { getAllUpcomingExamAPI } from "../../service/Exams/examService";
+import React, { useEffect, useState } from 'react'
+import { Clock, Calendar, Timer, Award, } from 'lucide-react'
+import { getAllUpcomingExamAPI } from '../../service/Exams/examService';
 import dayjs from "dayjs";
 
-const ExamList = ({
-  exams,
-  getDifficultyColor,
-  getDaysLeftColor,
-  startExam,
-}) => {
+const ExamList = ({  getDifficultyColor, startExam }) => {
   const [examDetails, setExamDetails] = useState([]);
   const classId = localStorage.getItem("class");
 
   const handleViewUpcomingExamDetails = async () => {
     try {
       const response = await getAllUpcomingExamAPI(classId);
-      console.log(response.data.data, " response frm exam");
-      setExamDetails(response.data.data);
+      setExamDetails(response.data.data)
     } catch (error) {
-      console.log(err, "err");
+      console.log(error, "err");
     }
   };
 
   useEffect(() => {
-    handleViewUpcomingExamDetails();
-  }, []);
+    handleViewUpcomingExamDetails()
+  }, [])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-4">
@@ -85,14 +79,12 @@ const ExamList = ({
                   </div>
                   <div className="flex items-center">
                     <Award className="w-4 h-4 mr-2" />
-                    <span>{exam.totalMark} marks</span>
+                    <span>{exam?.selectedQuestions?.length} marks</span>
                   </div>
                 </div>
                 <p className="text-sm text-gray-600">
                   <span className="font-medium">Questions:</span>{" "}
-                  {exam?.selectedQuestions?.length} •{" "}
-                  <span className="font-medium">Instructions:</span>{" "}
-                  {exam?.instructions || "No instructions"}
+                  {exam?.selectedQuestions?.length}
                 </p>
               </div>
               <div className="px-6 pb-6">
@@ -111,6 +103,6 @@ const ExamList = ({
       </div>
     </div>
   );
-};
+}
 
-export default ExamList;
+export default ExamList

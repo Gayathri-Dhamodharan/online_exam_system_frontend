@@ -26,7 +26,7 @@ import {
   updateQuestion,
 } from "../../service/Questions/editQuestion";
 import { getQuestions } from "../../service/Questions/getQuestions";
-import { addExamApi } from "../../service/Exams/examService";
+import { addExamApi, getExamApi } from "../../service/Exams/examService";
 
 const QuestionBank = () => {
   const [currentStep, setCurrentStep] = useState("classSubject"); // classSubject, dashboard, createQuestion, createExam, viewExams, viewExamDetails, editQuestion, editExam
@@ -55,10 +55,7 @@ const QuestionBank = () => {
     selectedQuestions: [],
   });
 
-  console.log(
-    editingQuestion,
-    " editingQuestioneditingQuestioneditingQuestion"
-  );
+
 
   const handleUpdateQuestion = async () => {
     if (currentQuestion.questionText && currentQuestion.answer) {
@@ -72,7 +69,6 @@ const QuestionBank = () => {
 
       try {
         const response = await updateQuestion(editingQuestion, currentQuestion);
-        console.log("response for update ", response);
 
         if (response?.status == "200") {
           alert("updated successfully ");
@@ -90,7 +86,6 @@ const QuestionBank = () => {
     try {
       const response = await getQuestions();
       setQuestionsData(response?.data);
-      console.log(response, "response888888");
     } catch (err) {
       alert("something went wrong");
       console.log(err, "err");
@@ -99,7 +94,6 @@ const QuestionBank = () => {
   const handleDeleteQuestion = async (questionId) => {
     try {
       const deletedData = await deleteQuestionById(questionId);
-      console.log(deletedData, "deletedData");
 
       if (deletedData?.status == "200") {
         getAllQuestions();
@@ -111,22 +105,10 @@ const QuestionBank = () => {
     } catch (error) {
       console.log(error, "deletedData-error");
     }
-    // if (window.confirm("Are you sure you want to delete this question?")) {
-    //   setQuestions(questions.filter((q) => q.id !== questionId));
-    //   // Also remove from any exams
-    //   setExams(
-    //     exams.map((exam) => ({
-    //       ...exam,
-    //       selectedQuestions: exam.selectedQuestions.filter(
-    //         (qId) => qId !== questionId
-    //       ),
-    //     }))
-    //   );
-    // }
+
   };
   useEffect(() => {
     getAllQuestions();
-    console.log("initial call");
   }, []);
   const handleEditQuestion = (question) => {
     setEditingQuestion(question);
@@ -143,6 +125,7 @@ const QuestionBank = () => {
       marks: 1,
     });
   };
+
 
   const handleCreateExam = async () => {
     if (
@@ -162,16 +145,17 @@ const QuestionBank = () => {
           const question = questions.find((q) => q.id === qId);
           return sum + (question?.marks || 0);
         }, 0),
+        passMark:currentExam?.passMark ||0,
+        startDate: currentExam?.startDate||0,
+        duration:currentExam?.duration||0,
+        startTime: currentExam?.time || "00:00",
       };
-      // console.log(newExam, "uhuhikhnikh");
       try {
         const response = await addExamApi(newExam);
-
-        console.log(response, " response frm exam");
       } catch (err) {
         console.log(err, "err");
       }
-      // setExams([...exams, newExam]);
+      setExams([...exams, newExam]);
       resetCurrentExam();
       setCurrentStep("dashboard");
     }
@@ -227,18 +211,12 @@ const QuestionBank = () => {
     });
   };
 
-  const handleDeleteExam = (examId) => {
-    if (window.confirm("Are you sure you want to delete this exam?")) {
-      setExams(exams.filter((exam) => exam.id !== examId));
-    }
-  };
 
   const handleViewExamDetails = async (exam) => {
     try {
       const response = await getExamApi(newExam);
-      console.log(response, " response frm exam");
     } catch (error) {
-      console.log(err, "err");
+      console.log(error, "err");
     }
     setSelectedExam(exam);
     setCurrentStep("viewExamDetails");
@@ -375,26 +353,7 @@ const QuestionBank = () => {
     );
   }
 
-  // Edit Exam
-  if (currentStep === "editExam") {
-    const classSubjectQuestions = questions.filter(
-      (q) => q.class === selectedClass && q.subject === selectedSubject
-    );
 
-    return (
-      <EditExam
-        classSubjectQuestions={classSubjectQuestions}
-        selectedClass={selectedClass}
-        selectedSubject={selectedSubject}
-        setEditingExam={setEditingExam}
-        resetCurrentExam={resetCurrentExam}
-        setCurrentStep={setCurrentStep}
-        currentExam={currentExam}
-        setCurrentExam={setCurrentExam}
-        handleUpdateExam={handleUpdateExam}
-      />
-    );
-  }
 
   // View Exams
   if (currentStep === "viewExams") {
@@ -408,29 +367,14 @@ const QuestionBank = () => {
         classSubjectExams={classSubjectExams}
         setClassSubjectExams={setClassSubjectExams}
         getDifficultyText={getDifficultyText}
-        handleEditExam={handleEditExam}
-        handleDeleteExam={handleDeleteExam}
         getDifficultyColor={getDifficultyColor}
         handleViewExamDetails={handleViewExamDetails}
       />
     );
   }
 
-  // View Exam Details
-  // if (currentStep === "viewExamDetails" && selectedExam) {
-  //   const examQuestions = questions.filter((q) =>
-  //     selectedExam.selectedQuestions.includes(q.id)
-  //   );
-  //   const availableQuestions = questions.filter(
-  //     (q) =>
-  //       q.class === selectedClass &&
-  //       q.subject === selectedSubject &&
-  //       !selectedExam.selectedQuestions.includes(q.id)
-  //   );
-
   if (currentStep === "viewExamDetails" && selectedExam) {
-    // Don't filter questions here since we'll handle it in ViewExamDetails
-    // after fetching the complete exam data
+
     const availableQuestions = questions.filter(
       (q) => q.class === selectedClass && q.subject === selectedSubject
     );
@@ -440,7 +384,6 @@ const QuestionBank = () => {
         setSelectedExam={setSelectedExam}
         selectedClass={selectedClass}
         selectedSubject={selectedSubject}
-        // examQuestions={examQuestions}
         setClassSubjectExams={setClassSubjectExams}
         classSubjectExams={classSubjectExams}
         handleRemoveQuestionFromExam={handleRemoveQuestionFromExam}

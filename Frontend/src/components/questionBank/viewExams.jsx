@@ -1,11 +1,10 @@
-import React, { useDebugValue, useEffect, useState } from "react";
+
+
+import React, { useEffect, useState } from "react";
 import {
   Plus,
-  Edit,
-  Trash2,
   Calendar,
   Clock,
-  FileText,
   Eye,
 } from "lucide-react";
 import { getExamApi } from "../../service/Exams/examService";
@@ -19,11 +18,9 @@ const ViewExams = ({
   classSubjectExams,
   getDifficultyText,
   setClassSubjectExams,
-  handleEditExam,
-  handleDeleteExam,
   getDifficultyColor,
 }) => {
-  console.log(selectedExam, "from teh view exam");
+  
   const [examId, setExamId] = useState();
 
   const handleViewExamDetails = async () => {
@@ -42,20 +39,15 @@ const ViewExams = ({
       } else if (Array.isArray(response.data)) {
         setClassSubjectExams(response.data);
       } else {
-        console.log("Unexpected response structure:", response);
         setClassSubjectExams([]);
       }
     } catch (error) {
-      console.log(error, "err");
       setClassSubjectExams([]); // Set empty array on error
     }
   };
 
-  console.log(classSubjectExams, " response frm exam");
-
   useEffect(() => {
     handleViewExamDetails();
-    console.log("initallty>>");
   }, []);
 
   return (
@@ -107,18 +99,6 @@ const ViewExams = ({
                       exam.selectedQuestions?.length || exam.questionsCount || 0
                     )}
                   </span>
-                  <button
-                    onClick={() => handleEditExam(exam)}
-                    className="text-blue-500 hover:text-blue-700 transition-colors"
-                  >
-                    <Edit className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => handleDeleteExam(exam._id || exam.id)}
-                    className="text-red-500 hover:text-red-700 transition-colors"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
                 </div>
               </div>
 
@@ -135,7 +115,7 @@ const ViewExams = ({
                 <div className="flex items-center text-gray-600">
                   <Clock className="w-4 h-4 mr-2" />
                   <span className="text-sm">
-                    {exam.startTime || exam.time || "No time set"}
+                    {exam.startTime || exam.startTime || "No time set"}
                   </span>
                 </div>
 
@@ -143,27 +123,14 @@ const ViewExams = ({
                   <Clock className="w-4 h-4 mr-2" />
                   <span className="text-sm">{exam.duration || 0} min</span>
                 </div>
-
-                <div className="flex items-center text-gray-600">
-                  <FileText className="w-4 h-4 mr-2" />
-                  <span className="text-sm">
-                    {exam.totalMark || exam.totalMarks || 0} marks
-                  </span>
-                </div>
               </div>
 
-              <div className="mt-4 text-sm text-gray-500">
-                Questions:{" "}
-                {exam.selectedQuestions?.length || exam.questionsCount || 0} •
-                Pass Mark: {exam.passMark || exam.passMarks || 0}
-              </div>
 
               <button
                 onClick={() => {
                   setCurrentStep("viewExamDetails");
                   // Pass the entire exam object instead of just the ID
                   setSelectedExam(exam);
-                  console.log("Setting selected exam:", exam);
                 }}
                 className="mt-4 w-full bg-teal-600 text-white py-2 px-4 rounded-lg hover:bg-teal-700 transition-colors"
               >
@@ -194,4 +161,3 @@ const ViewExams = ({
 };
 
 export default ViewExams;
-

@@ -14,20 +14,17 @@ const ClassSubject = ({
     (async () => {
       try {
         const { data } = await api.get("/api/class");
-        // console.log("data",data)
         setClasses(data);
       } catch (e) {
         console.error(e);
       }
     })();
   }, []);
-  console.log(selectedClass, "selectedClass00");
-  console.log(selectedSubject, "selectedSubject000");
+ 
   useEffect(() => {
     (async () => {
       try {
         const { data } = await api.get("/api/subjects");
-        // console.log("data",data)
         setSubjects(data);
       } catch (e) {
         console.error(e);
@@ -35,17 +32,7 @@ const ClassSubject = ({
     })();
   }, []);
 
-  // const subjects = [
-  //   "Mathematics",
-  //   "English",
-  //   "Science",
-  //   "Physics",
-  //   "Chemistry",
-  //   "Biology",
-  //   "Tamil",
-  //   "Social Science",
-  // ];
-
+  
   const handleClassSubjectSelect = () => {
     if (selectedClass && selectedSubject) {
       setCurrentStep("dashboard");
@@ -63,45 +50,6 @@ const ClassSubject = ({
             <h2 className="text-2xl font-semibold text-gray-700 mb-6">
               Select Class and Subject
             </h2>
-
-            {/* <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Select Class
-                </label>
-                <select
-                  value={selectedClass}
-                  onChange={(e) => setSelectedClass(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                >
-                  <option value="">Choose a class</option>
-                  {classes?.map((cls) => (
-                    <option key={cls._id} value={cls}>
-                      {console.log(cls, "clc")}
-                      {cls.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Select Subject
-                </label>
-                <select
-                  value={selectedSubject}
-                  onChange={(e) => setSelectedSubject(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                >
-                  <option value="">Choose a subject</option>
-                  {subjects.map((subject) => (
-                    <option key={subject._id} value={subject}>
-                      {subject.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div> */}
             <div className="grid md:grid-cols-2 gap-6">
               {/* Class Select */}
               <div>

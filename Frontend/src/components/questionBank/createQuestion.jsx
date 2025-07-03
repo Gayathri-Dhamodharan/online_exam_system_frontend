@@ -6,30 +6,21 @@ import { addQuestion } from "../../service/Questions/addQuestions";
 import { getQuestions } from "../../service/Questions/getQuestions";
 
 const CreateQuestion = ({
-  questions,
   selectedClass,
   selectedSubject,
   setCurrentStep,
   setCurrentQuestion,
   currentQuestion,
   classSubjectQuestions,
-  setQuestions,
-  handleEditQuestion,
-  handleDeleteQuestion,
   resetCurrentQuestion,
   questionsData,
   getAllQuestions,
 }) => {
   //  const id =localStorage.getItem("id");
 
-  console.log(
-    classSubjectQuestions,
-    "curnewQuestionrentQuestioncnewQuestionurrentQuestion"
-  );
   const role = localStorage.getItem("role");
   const userId = localStorage.getItem("userId");
-  console.log(selectedClass, "selectedClass");
-  console.log(selectedSubject, "selectedSubject");
+ 
   const handleCreateQuestion = async () => {
     if (currentQuestion.questionText && currentQuestion.answer) {
       const { type, ...rest } = currentQuestion;
@@ -46,7 +37,7 @@ const CreateQuestion = ({
       };
       try {
         const response = await addQuestion(newQuestion);
-        console.log(response, "ress");
+       
         if (response?.status == 201) {
           alert("Question created successfully");
           resetCurrentQuestion();
@@ -54,7 +45,6 @@ const CreateQuestion = ({
         }
       } catch (err) {
         alert("Something went wrong");
-        console.log(err, "err");
       }
     } else {
       alert("Please fill the required fields");
@@ -107,7 +97,7 @@ const CreateQuestion = ({
                   }
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
                 >
-                  <option value="mcq">Multiple Choice (MCQ)</option>
+                  <option value="MCQ">Multiple Choice (MCQ)</option>
                   <option value="True/False">True or False</option>
                 </select>
               </div>
@@ -130,7 +120,7 @@ const CreateQuestion = ({
                 />
               </div>
 
-              {currentQuestion.type === "mcq" && (
+              {currentQuestion.type === "MCQ" && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Options
@@ -188,17 +178,17 @@ const CreateQuestion = ({
                 )}
               </div>
 
-              <div>
+              <div className="hidden">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Marks
                 </label>
                 <input
                   type="number"
-                  value={currentQuestion.marks}
+                  value="1"
                   onChange={(e) =>
                     setCurrentQuestion({
                       ...currentQuestion,
-                      marks: parseInt(e.target.value) || 1,
+                      marks: 1,
                     })
                   }
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500"
@@ -235,18 +225,7 @@ const CreateQuestion = ({
                       <span className="text-sm text-teal-600 font-medium">
                         {question.marks} marks
                       </span>
-                      <button
-                        onClick={() => handleEditQuestion(question?._id)}
-                        className="text-blue-500 hover:text-blue-700 transition-colors"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteQuestion(question._id)}
-                        className="text-red-500 hover:text-red-700 transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      
                     </div>
                   </div>
                   <p className="text-gray-800 text-sm mb-2">
@@ -270,5 +249,5 @@ const CreateQuestion = ({
     </div>
   );
 };
-  
+
 export default CreateQuestion;

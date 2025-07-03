@@ -28,6 +28,7 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import RateReviewIcon from "@mui/icons-material/RateReview";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { Pointer } from "lucide-react";
 
 const drawerWidth = 240;
 
@@ -82,8 +83,10 @@ export default function AdminLayout() {
               }
             }}
           >
-            <ListItemIcon sx={{ color: "inherit" }}>{item.icon}</ListItemIcon>
-            <ListItemText primary={item.text} />
+            <ListItemIcon sx={{ color: "inherit", cursor: "Pointer" }}>
+              {item.icon}
+            </ListItemIcon>
+            <ListItemText primary={item.text} sx={{ cursor: "Pointer" }} />
           </ListItem>
         ))}
       </List>
@@ -99,7 +102,7 @@ export default function AdminLayout() {
         position="fixed"
         sx={{
           zIndex: theme.zIndex.drawer + 1,
-          background: "linear-gradient(to bottom, #006a70, rgb(44, 150, 152))",
+          background: "linear-gradient(to bottom, rgb(44, 150, 152))",
         }}
       >
         <Toolbar>

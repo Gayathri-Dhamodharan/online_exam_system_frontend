@@ -1,8 +1,6 @@
 import api from "../api";
 
 export const addExamApi = async (payload) => {
-  console.log(payload, "add exam");
-
   const result = await api.post("/api/exam/create-exam", payload);
   return result;
 };
@@ -16,8 +14,16 @@ export const getSingleExam = async (examId) => {
   const result = await api.get(`/api/exam/get-singleExam/${examId}`);
   return result;
 };
+
 export const getAllUpcomingExamAPI = async (classID) => {
   console.log(classID, "examIdexamIdexamIdexamId");
   const result = await api.get(`/api/exam/class/${classID}`);
+  return result;
+};
+
+ 
+
+export const submitExamResult = async (payload) => {
+  const result = await api.post(`/api/exam/attend`, payload);
   return result;
 };

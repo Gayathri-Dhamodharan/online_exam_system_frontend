@@ -15,6 +15,7 @@ import ExamList from "../../components/examBank/examList";
 import Instructions from "../../components/examBank/instructions";
 import ExamConductingTab from "../../components/examBank/examConductingTab";
 import CompleteExam from "../../components/examBank/completeExam";
+import { submitExamResult } from "../../service/Exams/examService";
 
 const Exam = () => {
   const [currentScreen, setCurrentScreen] = useState("examList"); // examList, instructions, exam, completed
@@ -259,7 +260,7 @@ const Exam = () => {
       timer = setInterval(() => {
         setTimeLeft((prev) => {
           if (prev <= 1) {
-            setCurrentScreen("completed");
+            submitExam(); // Auto-submit when time runs out
             return 0;
           }
           return prev - 1;
@@ -280,13 +281,15 @@ const Exam = () => {
     setCurrentQuestion(0);
     // Initialize statuses
     const statuses = {};
-    selectedExam.questions.forEach((_, idx) => {
+    selectedExam?.selectedQuestions?.forEach((_, idx) => {
       statuses[idx] = idx === 0 ? "current" : "not-visited";
     });
     setQuestionStatuses(statuses);
   };
 
   const saveAnswer = (questionIdx, answerIdx) => {
+    console.log(questionIdx, answerIdx, "saving answer");
+
     setAnswers((prev) => ({ ...prev, [questionIdx]: answerIdx }));
     setQuestionStatuses((prev) => ({
       ...prev,
@@ -311,8 +314,77 @@ const Exam = () => {
     setShowQuestionMenu(false);
   };
 
-  const submitExam = () => {
-    setCurrentScreen("completed");
+  // Function to prepare exam data for backend submission
+  // Function to prepare exam data for backend submission
+  const prepareExamSubmissionData = () => {
+    const questions = [];
+
+    // Process each answered question
+    Object.keys(answers).forEach((questionIndex) => {
+      const answerIndex = answers[questionIndex];
+      const question =
+        selectedExam?.selectedQuestions?.[parseInt(questionIndex)];
+
+      if (question && answerIndex !== undefined) {
+        const answerText = question.questionOptions?.[answerIndex];
+
+        questions.push({
+          ques_id: question._id || question.id, // Use _id if available, fallback to id
+          answer: answerText,
+          answerIndex: answerIndex, // Include the index as well
+        });
+      }
+    });
+
+    return {
+      examId: selectedExam._id || selectedExam.id, // Use _id if available, fallback to id
+      questions: questions,
+      totalQuestions: selectedExam?.selectedQuestions?.length || 0,
+      answeredQuestions: questions.length,
+    };
+  };
+
+  // Function to submit exam to backend
+  const submitExamToBackend = async (examData) => {
+    try {
+      console.log("Submitting exam data:", examData);
+
+      console.log(
+        "Exam submission data prepared:",
+        JSON.stringify(examData, null, 2)
+      );
+
+      await submitExamResult(examData);
+
+      return { success: true, message: "Exam submitted successfully" };
+    } catch (error) {
+      console.error("Error submitting exam:", error);
+      return { success: false, message: "Failed to submit exam" };
+    }
+  };
+
+  const submitExam = async () => {
+    try {
+      // Prepare data for backend
+      const examSubmissionData = prepareExamSubmissionData();
+
+      // Submit to backend
+      const result = await submitExamToBackend(examSubmissionData);
+
+      if (result.success) {
+        console.log("Exam submitted successfully");
+        setCurrentScreen("completed");
+      } else {
+        console.error("Failed to submit exam:", result.message);
+        // You might want to show an error message to the user here
+        // For now, still proceed to completed screen
+        setCurrentScreen("completed");
+      }
+    } catch (error) {
+      console.error("Error during exam submission:", error);
+      // Handle error appropriately
+      setCurrentScreen("completed");
+    }
   };
 
   const formatTime = (seconds) => {
@@ -386,6 +458,8 @@ const Exam = () => {
   if (currentScreen === "exam") {
     const qData = selectedExam?.selectedQuestions?.[currentQuestion] || null;
 
+    console.log(qData, "qData>>>>");
+
     return (
       <ExamConductingTab
         isMobile={isMobile}
@@ -412,54 +486,17 @@ const Exam = () => {
   // Completed screen
   if (currentScreen === "completed") {
     return (
-      // <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
-      //   <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 max-w-md w-full text-center">
-      //     <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-      //     <h2 className="text-2xl font-bold text-gray-800 mb-2">
-      //       Exam Completed!
-      //     </h2>
-      //     <p className="text-gray-600 mb-6">
-      //       Your exam has been submitted successfully.
-      //     </p>
-      //     <div className="bg-gray-50 rounded-lg p-4 mb-6 text-left">
-      //       <h3 className="font-semibold text-gray-800 mb-2">
-      //         {selectedExam.title}
-      //       </h3>
-      //       <p className="text-sm text-gray-600">
-      //         Questions Answered: {Object.keys(answers).length} /{" "}
-      //         {selectedExam.questions.length}
-      //       </p>
-      //       <p className="text-sm text-gray-600">
-      //         Time Taken: {formatTime(selectedExam.duration * 60 - timeLeft)}
-      //       </p>
-      //     </div>
-      //     <button
-      //       onClick={() => {
-      //         setCurrentScreen("examList");
-      //         setSelectedExam(null);
-      //         setAnswers({});
-      //         setQuestionStatuses({});
-      //         setCurrentQuestion(0);
-      //         setTimeLeft(0);
-      //       }}
-      //       className="w-full bg-teal-600 text-white py-2 rounded-md hover:bg-teal-700 font-medium"
-      //     >
-      //       Back to Exams
-      //     </button>
-      //   </div>
-      // </div>
- <CompleteExam
- selectedExam={selectedExam}
- answers={answers}
- formatTime={formatTime}
- timeLeft={timeLeft}
- setCurrentScreen={setCurrentScreen}
- setSelectedExam={setSelectedExam}
- setCurrentQuestion={setCurrentQuestion}
- setQuestionStatuses={setQuestionStatuses}
- setTimeLeft={setTimeLeft}
- />
-      
+      <CompleteExam
+        selectedExam={selectedExam}
+        answers={answers}
+        formatTime={formatTime}
+        timeLeft={timeLeft}
+        setCurrentScreen={setCurrentScreen}
+        setSelectedExam={setSelectedExam}
+        setCurrentQuestion={setCurrentQuestion}
+        setQuestionStatuses={setQuestionStatuses}
+        setTimeLeft={setTimeLeft}
+      />
     );
   }
 

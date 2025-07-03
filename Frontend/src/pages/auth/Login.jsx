@@ -7,7 +7,8 @@ import { useNavigate } from "react-router-dom";
 import api from "../../service/api";
 
 // point axios at your backend
-axios.defaults.baseURL = "https://online-exam-system-backend-kr3u.onrender.com";
+axios.defaults.baseURL =
+  "https://online-exam-system-backend-kr3u.onrender.com/";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -36,8 +37,7 @@ const Login = () => {
         localStorage.setItem("lastname", user.lastname);
         localStorage.setItem("class", user.class);
 
-        console.log("User ID:", localStorage.getItem("id"));
-        console.log("User Name:", localStorage.getItem("name"));
+     
 
         if (user.role === "admin") {
           navigate("/admin/dashboard");

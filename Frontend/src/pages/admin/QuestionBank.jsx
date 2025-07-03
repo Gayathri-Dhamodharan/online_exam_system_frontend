@@ -55,7 +55,7 @@ const QuestionBank = () => {
     selectedQuestions: [],
   });
 
-
+  console.log("questionsData", questionsData);
 
   const handleUpdateQuestion = async () => {
     if (currentQuestion.questionText && currentQuestion.answer) {
@@ -82,15 +82,26 @@ const QuestionBank = () => {
       }
     }
   };
+  const classId = selectedClass?._id;
+  const subjId = selectedSubject?._id;
+
+  // console.log(classId, subjId, "subjId,classId");
+
   const getAllQuestions = async () => {
     try {
-      const response = await getQuestions();
+      const response = await getQuestions(classId, subjId);
       setQuestionsData(response?.data);
     } catch (err) {
       alert("something went wrong");
       console.log(err, "err");
     }
   };
+  useEffect(() => {
+    if (classId && subjId) {
+      getAllQuestions();
+    }
+  }, [classId, subjId]);
+
   const handleDeleteQuestion = async (questionId) => {
     try {
       const deletedData = await deleteQuestionById(questionId);
@@ -105,11 +116,8 @@ const QuestionBank = () => {
     } catch (error) {
       console.log(error, "deletedData-error");
     }
-
   };
-  useEffect(() => {
-    getAllQuestions();
-  }, []);
+
   const handleEditQuestion = (question) => {
     setEditingQuestion(question);
     setCurrentQuestion({ ...question });
@@ -125,7 +133,6 @@ const QuestionBank = () => {
       marks: 1,
     });
   };
-
 
   const handleCreateExam = async () => {
     if (
@@ -145,9 +152,9 @@ const QuestionBank = () => {
           const question = questions.find((q) => q.id === qId);
           return sum + (question?.marks || 0);
         }, 0),
-        passMark:currentExam?.passMark ||0,
-        startDate: currentExam?.startDate||0,
-        duration:currentExam?.duration||0,
+        passMark: currentExam?.passMark || 0,
+        startDate: currentExam?.startDate || 0,
+        duration: currentExam?.duration || 0,
         startTime: currentExam?.time || "00:00",
       };
       try {
@@ -210,7 +217,6 @@ const QuestionBank = () => {
       selectedQuestions: [],
     });
   };
-
 
   const handleViewExamDetails = async (exam) => {
     try {
@@ -353,8 +359,6 @@ const QuestionBank = () => {
     );
   }
 
-
-
   // View Exams
   if (currentStep === "viewExams") {
     return (
@@ -374,7 +378,6 @@ const QuestionBank = () => {
   }
 
   if (currentStep === "viewExamDetails" && selectedExam) {
-
     const availableQuestions = questions.filter(
       (q) => q.class === selectedClass && q.subject === selectedSubject
     );

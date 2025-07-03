@@ -25,7 +25,7 @@ const ClassSubject = ({
     (async () => {
       try {
         const { data } = await api.get("/api/subjects");
-        setSubjects(data);
+        setSubjects(data);        
       } catch (e) {
         console.error(e);
       }
@@ -36,6 +36,8 @@ const ClassSubject = ({
   const handleClassSubjectSelect = () => {
     if (selectedClass && selectedSubject) {
       setCurrentStep("dashboard");
+      console.log(selectedClass, "selectedClass");
+      console.log(selectedSubject, "selectedSubject");
     }
   };
   return (
